@@ -5,16 +5,24 @@ export interface AuthRequest extends Request {
   userId?: string
 }
 
-const auth = (req: AuthRequest, res: Response, next: NextFunction) => {
-  const token = req.headers.authorization?.split(' ')[1]
+interface JwtPayload {
+  id: string
+  iat: number
+  exp: number
+}
 
-  if (!token) {
+const auth = (req: AuthRequest, res: Response, next: NextFunction) => {
+  const authHeader = req.headers.authorization
+
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
     res.status(401).json({ message: 'Nicht autorisiert' })
     return
   }
 
+  const token = authHeader.split(' ')[1]
+
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as { id: string }
+    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as JwtPayload
     req.userId = decoded.id
     next()
   } catch {
