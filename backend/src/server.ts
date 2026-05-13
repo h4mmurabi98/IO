@@ -3,6 +3,7 @@ import cors from 'cors'
 import dotenv from 'dotenv'
 import connectDB from './config/db'
 import authRoutes from './routes/auth'
+import taskRoutes from './routes/tasks'
 
 dotenv.config()
 
@@ -13,6 +14,7 @@ app.use(cors({ origin: 'http://localhost:5173' }))
 app.use(express.json())
 
 app.use('/api/auth', authRoutes)
+app.use('/api/tasks', taskRoutes)
 
 app.get('/api/health', (_, res) => {
   res.json({ status: 'ok' })
