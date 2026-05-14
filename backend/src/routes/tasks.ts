@@ -1,7 +1,9 @@
 import { Router, Response } from 'express'
 import mongoose from 'mongoose'
 import Task, { ITask } from '../models/Task'
+import User from '../models/User'
 import auth, { AuthRequest } from '../middleware/auth'
+import { calcLevel } from '../utils/levels'
 
 const router = Router()
 router.use(auth)
@@ -92,8 +94,7 @@ router.put('/:id/assign', async (req: AuthRequest, res: Response) => {
   }
 })
 
-// PUT /api/tasks/:id/complete – Task abschließen
-// Punkte- und Level-Logik wird in Schritt 4 ergänzt
+// PUT /api/tasks/:id/complete – Task abschließen + Punkte & Level aktualisieren
 router.put('/:id/complete', async (req: AuthRequest, res: Response) => {
   try {
     const task = await Task.findById(req.params.id)
@@ -117,7 +118,23 @@ router.put('/:id/complete', async (req: AuthRequest, res: Response) => {
     task.completedAt = new Date()
     await task.save()
 
-    res.json(formatTask(task))
+    // Punkte dem Ausführenden gutschreiben und Level prüfen
+    const user = await User.findById(task.assignedTo)
+    if (user) {
+      user.points += task.pointValue
+      user.level   = calcLevel(user.points)
+      await user.save()
+
+      res.json({
+        task:         formatTask(task),
+        pointsEarned: task.pointValue,
+        newPoints:    user.points,
+        newLevel:     user.level,
+      })
+      return
+    }
+
+    res.json({ task: formatTask(task) })
   } catch {
     res.status(500).json({ message: 'Serverfehler' })
   }
