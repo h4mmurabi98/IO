@@ -1,8 +1,27 @@
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import HomePage from './pages/HomePage'
+import LoginPage from './pages/LoginPage'
+import RegisterPage from './pages/RegisterPage'
+import TasksPage from './pages/TasksPage'
+import TaskNewPage from './pages/TaskNewPage'
+import TaskDetailPage from './pages/TaskDetailPage'
+import ProfilePage from './pages/ProfilePage'
+import LeaderboardPage from './pages/LeaderboardPage'
+
 function App() {
   return (
-    <div>
-      <h1>IO</h1>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/"             element={<HomePage />} />
+        <Route path="/login"        element={<LoginPage />} />
+        <Route path="/register"     element={<RegisterPage />} />
+        <Route path="/tasks"        element={<TasksPage />} />
+        <Route path="/tasks/new"    element={<TaskNewPage />} />
+        <Route path="/tasks/:id"    element={<TaskDetailPage />} />
+        <Route path="/profile"      element={<ProfilePage />} />
+        <Route path="/leaderboard"  element={<LeaderboardPage />} />
+      </Routes>
+    </BrowserRouter>
   )
 }
 
