@@ -1,34 +1,62 @@
 import mongoose, { Document, Schema } from 'mongoose'
 
-export type TaskCategory = 'Einkauf' | 'Haushalt' | 'Handwerk' | 'Transport' | 'Betreuung' | 'Sonstiges'
+export type TaskCategory =
+  | 'Geistig'
+  | 'Körperlich'
+  | 'Haushalt & Handwerk'
+  | 'Digital & Technik'
+  | 'Talent & Kreativität'
+  | 'Sozial & Kommunikation'
+
 export type TaskStatus = 'open' | 'assigned' | 'done'
 
 export interface ITask extends Document {
-  title: string
-  description: string
-  category: TaskCategory
-  createdBy: mongoose.Types.ObjectId
-  assignedTo: mongoose.Types.ObjectId | null
-  status: TaskStatus
-  pointValue: number
-  location?: string
-  completedAt: Date | null
-  createdAt: Date
+  title:           string
+  description:     string
+  categories:      TaskCategory[]
+  createdBy:       mongoose.Types.ObjectId
+  assignedTo:      mongoose.Types.ObjectId | null
+  status:          TaskStatus
+  difficulty:      number
+  durationMinutes: number
+  pointValue:      number
+  location?:       string
+  completedAt:     Date | null
+  createdAt:       Date
 }
+
+const CATEGORIES: TaskCategory[] = [
+  'Geistig',
+  'Körperlich',
+  'Haushalt & Handwerk',
+  'Digital & Technik',
+  'Talent & Kreativität',
+  'Sozial & Kommunikation',
+]
 
 const taskSchema = new Schema<ITask>(
   {
-    title:       { type: String, required: true, trim: true },
-    description: { type: String, required: true },
-    category:    { type: String, required: true, enum: ['Einkauf', 'Haushalt', 'Handwerk', 'Transport', 'Betreuung', 'Sonstiges'] },
-    createdBy:   { type: Schema.Types.ObjectId, ref: 'User', required: true },
-    assignedTo:  { type: Schema.Types.ObjectId, ref: 'User', default: null },
-    status:      { type: String, enum: ['open', 'assigned', 'done'], default: 'open' },
-    pointValue:  { type: Number, required: true, min: 10, max: 100 },
-    location:    { type: String, trim: true },
-    completedAt: { type: Date, default: null },
+    title:           { type: String, required: true, trim: true },
+    description:     { type: String, required: true },
+    categories:      { type: [String], enum: CATEGORIES, required: true },
+    createdBy:       { type: Schema.Types.ObjectId, ref: 'User', required: true },
+    assignedTo:      { type: Schema.Types.ObjectId, ref: 'User', default: null },
+    status:          { type: String, enum: ['open', 'assigned', 'done'], default: 'open' },
+    difficulty:      { type: Number, required: true, min: 1, max: 5 },
+    durationMinutes: { type: Number, required: true, min: 1 },
+    pointValue:      { type: Number },
+    location:        { type: String, trim: true },
+    completedAt:     { type: Date, default: null },
   },
   { timestamps: true }
 )
+
+// pointValue automatisch berechnen
+taskSchema.pre('save', function (next) {
+  if (this.isNew || this.isModified('difficulty') || this.isModified('durationMinutes')) {
+    this.pointValue = this.difficulty * this.durationMinutes
+  }
+  next()
+})
 
 export default mongoose.model<ITask>('Task', taskSchema)

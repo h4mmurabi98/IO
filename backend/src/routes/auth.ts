@@ -1,6 +1,7 @@
 import { Router, Request, Response } from 'express'
 import jwt from 'jsonwebtoken'
 import User from '../models/User'
+import Task from '../models/Task'
 import auth, { AuthRequest } from '../middleware/auth'
 
 const router = Router()
@@ -65,7 +66,7 @@ router.post('/login', async (req: Request, res: Response) => {
   }
 })
 
-// GET /api/auth/me – eigenes Profil abrufen (geschützt)
+// GET /api/auth/me – eigenes Profil mit Rollen-Stats abrufen (geschützt)
 router.get('/me', auth, async (req: AuthRequest, res: Response) => {
   try {
     const user = await User.findById(req.userId)
@@ -74,14 +75,38 @@ router.get('/me', auth, async (req: AuthRequest, res: Response) => {
       return
     }
 
+    // Seeker-Stats: Tasks die ich erstellt habe
+    const seekerTasks = await Task.find({ createdBy: req.userId })
+    const seekerCompleted = seekerTasks.filter(t => t.status === 'done')
+    const avgDifficulty =
+      seekerTasks.length > 0
+        ? seekerTasks.reduce((sum, t) => sum + t.difficulty, 0) / seekerTasks.length
+        : 0
+
+    // Supporter-Stats: Tasks die ich angenommen habe
+    const supporterTasks    = await Task.find({ assignedTo: req.userId })
+    const supporterCompleted = supporterTasks.filter(t => t.status === 'done')
+    const totalPointsEarned  = supporterCompleted.reduce((sum, t) => sum + t.pointValue, 0)
+
     res.json({
-      id: String(user._id),
-      username: user.username,
-      email: user.email,
-      points: user.points,
-      level: user.level,
-      badges: user.badges,
+      id:        String(user._id),
+      username:  user.username,
+      email:     user.email,
+      points:    user.points,
+      level:     user.level,
+      badges:    user.badges,
+      location:  user.location,
       createdAt: user.createdAt,
+      seekerStats: {
+        tasksCreated:   seekerTasks.length,
+        tasksCompleted: seekerCompleted.length,
+        avgDifficulty:  Math.round(avgDifficulty * 10) / 10,
+      },
+      supporterStats: {
+        tasksAccepted:  supporterTasks.length,
+        tasksCompleted: supporterCompleted.length,
+        pointsEarned:   totalPointsEarned,
+      },
     })
   } catch (err) {
     res.status(500).json({ message: 'Serverfehler' })

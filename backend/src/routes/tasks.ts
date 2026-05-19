@@ -10,23 +10,33 @@ router.use(auth)
 
 // Hilfsfunktion: MongoDB-Objekt in API-Response umwandeln
 const formatTask = (task: ITask) => ({
-  id:          String(task._id),
-  title:       task.title,
-  description: task.description,
-  category:    task.category,
-  createdBy:   String(task.createdBy),
-  assignedTo:  task.assignedTo ? String(task.assignedTo) : null,
-  status:      task.status,
-  pointValue:  task.pointValue,
-  location:    task.location ?? null,
-  completedAt: task.completedAt,
-  createdAt:   task.createdAt,
+  id:              String(task._id),
+  title:           task.title,
+  description:     task.description,
+  categories:      task.categories,
+  createdBy:       String(task.createdBy),
+  assignedTo:      task.assignedTo ? String(task.assignedTo) : null,
+  status:          task.status,
+  difficulty:      task.difficulty,
+  durationMinutes: task.durationMinutes,
+  pointValue:      task.pointValue,
+  location:        task.location ?? null,
+  completedAt:     task.completedAt,
+  createdAt:       task.createdAt,
 })
 
-// GET /api/tasks – alle offenen Tasks abrufen
-router.get('/', async (_req: AuthRequest, res: Response) => {
+// GET /api/tasks – offene Tasks abrufen, optional nach Kategorien filtern
+router.get('/', async (req: AuthRequest, res: Response) => {
   try {
-    const tasks = await Task.find({ status: 'open' }).sort({ createdAt: -1 })
+    const filter: Record<string, unknown> = { status: 'open' }
+
+    // ?categories=Geistig,Körperlich → Array aufteilen und filtern
+    if (req.query.categories) {
+      const cats = (req.query.categories as string).split(',').map(c => c.trim())
+      filter.categories = { $in: cats }
+    }
+
+    const tasks = await Task.find(filter).sort({ createdAt: -1 })
     res.json(tasks.map(formatTask))
   } catch {
     res.status(500).json({ message: 'Serverfehler' })
@@ -34,15 +44,31 @@ router.get('/', async (_req: AuthRequest, res: Response) => {
 })
 
 // POST /api/tasks – neuen Task erstellen
+// pointValue wird vom Backend berechnet (difficulty * durationMinutes)
 router.post('/', async (req: AuthRequest, res: Response) => {
   try {
-    const { title, description, category, pointValue, location } = req.body
+    const { title, description, categories, difficulty, durationMinutes, location } = req.body
+
+    // Eingaben validieren
+    if (!Array.isArray(categories) || categories.length === 0) {
+      res.status(400).json({ message: 'Mindestens eine Kategorie erforderlich' })
+      return
+    }
+    if (difficulty < 1 || difficulty > 5) {
+      res.status(400).json({ message: 'Schwierigkeit muss zwischen 1 und 5 liegen' })
+      return
+    }
+    if (durationMinutes < 1) {
+      res.status(400).json({ message: 'Dauer muss mindestens 1 Minute betragen' })
+      return
+    }
 
     const task = await Task.create({
       title,
       description,
-      category,
-      pointValue,
+      categories,
+      difficulty,
+      durationMinutes,
       location,
       createdBy: req.userId,
     })
@@ -85,7 +111,7 @@ router.put('/:id/assign', async (req: AuthRequest, res: Response) => {
     }
 
     task.assignedTo = new mongoose.Types.ObjectId(req.userId)
-    task.status = 'assigned'
+    task.status     = 'assigned'
     await task.save()
 
     res.json(formatTask(task))
@@ -106,7 +132,6 @@ router.put('/:id/complete', async (req: AuthRequest, res: Response) => {
       res.status(400).json({ message: 'Task muss zuerst angenommen werden' })
       return
     }
-    // Nur der Ersteller oder der Ausführende darf abschließen
     const isCreator  = String(task.createdBy) === req.userId
     const isAssignee = String(task.assignedTo) === req.userId
     if (!isCreator && !isAssignee) {
@@ -118,7 +143,7 @@ router.put('/:id/complete', async (req: AuthRequest, res: Response) => {
     task.completedAt = new Date()
     await task.save()
 
-    // Punkte dem Ausführenden gutschreiben und Level prüfen
+    // Punkte dem Ausführenden gutschreiben und Level neu berechnen
     const user = await User.findById(task.assignedTo)
     if (user) {
       user.points += task.pointValue
