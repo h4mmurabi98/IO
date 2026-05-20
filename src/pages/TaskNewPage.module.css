@@ -1,0 +1,146 @@
+.page {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+
+.title {
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.field label {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+
+.field input,
+.field textarea {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  color: var(--color-text);
+  padding: 0.6rem 0.8rem;
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.15s;
+  resize: vertical;
+}
+
+.field input:focus,
+.field textarea:focus {
+  border-color: var(--color-accent);
+}
+
+.categories {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.catChip {
+  background: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  font-size: 0.82rem;
+  padding: 0.4rem 0.8rem;
+  transition: all 0.15s;
+}
+
+.catChip:hover {
+  border-color: var(--color-accent);
+  color: var(--color-text);
+}
+
+.catChipActive {
+  background: rgba(74, 158, 255, 0.12);
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+.difficultyBtns {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.diffBtn {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  color: var(--color-text-muted);
+  cursor: pointer;
+  font-size: 0.9rem;
+  padding: 0.4rem 0.9rem;
+  transition: all 0.15s;
+}
+
+.diffBtn:hover {
+  border-color: var(--color-warning);
+}
+
+.diffBtnActive {
+  background: rgba(210, 153, 34, 0.15);
+  border-color: var(--color-warning);
+  color: var(--color-warning);
+}
+
+.preview {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 0.75rem 1rem;
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+}
+
+.previewPoints {
+  font-family: var(--font-mono);
+  color: var(--color-accent);
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.error {
+  background: rgba(248, 81, 73, 0.1);
+  border: 1px solid var(--color-error);
+  border-radius: var(--radius);
+  color: var(--color-error);
+  padding: 0.6rem 0.8rem;
+  font-size: 0.875rem;
+}
+
+.submit {
+  background: var(--color-accent);
+  border: none;
+  border-radius: var(--radius);
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 500;
+  padding: 0.7rem;
+  transition: opacity 0.15s;
+}
+
+.submit:hover:not(:disabled) {
+  opacity: 0.85;
+}
+
+.submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

@@ -1,4 +1,7 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import type { ReactNode } from 'react'
+import { AuthProvider, useAuth } from './contexts/AuthContext'
+import Navbar from './components/Navbar'
 import HomePage from './pages/HomePage'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
@@ -8,20 +11,30 @@ import TaskDetailPage from './pages/TaskDetailPage'
 import ProfilePage from './pages/ProfilePage'
 import LeaderboardPage from './pages/LeaderboardPage'
 
+function ProtectedRoute({ children }: { children: ReactNode }) {
+  const { user, isLoading } = useAuth()
+  if (isLoading) return null
+  if (!user) return <Navigate to="/login" replace />
+  return <>{children}</>
+}
+
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/"             element={<HomePage />} />
-        <Route path="/login"        element={<LoginPage />} />
-        <Route path="/register"     element={<RegisterPage />} />
-        <Route path="/tasks"        element={<TasksPage />} />
-        <Route path="/tasks/new"    element={<TaskNewPage />} />
-        <Route path="/tasks/:id"    element={<TaskDetailPage />} />
-        <Route path="/profile"      element={<ProfilePage />} />
-        <Route path="/leaderboard"  element={<LeaderboardPage />} />
-      </Routes>
-    </BrowserRouter>
+    <AuthProvider>
+      <BrowserRouter>
+        <Navbar />
+        <Routes>
+          <Route path="/"            element={<HomePage />} />
+          <Route path="/login"       element={<LoginPage />} />
+          <Route path="/register"    element={<RegisterPage />} />
+          <Route path="/tasks"       element={<ProtectedRoute><TasksPage /></ProtectedRoute>} />
+          <Route path="/tasks/new"   element={<ProtectedRoute><TaskNewPage /></ProtectedRoute>} />
+          <Route path="/tasks/:id"   element={<ProtectedRoute><TaskDetailPage /></ProtectedRoute>} />
+          <Route path="/profile"     element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
+          <Route path="/leaderboard" element={<ProtectedRoute><LeaderboardPage /></ProtectedRoute>} />
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   )
 }
 

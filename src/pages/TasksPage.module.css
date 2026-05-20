@@ -1,0 +1,89 @@
+.page {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+.title {
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.newBtn {
+  background: var(--color-accent);
+  border: none;
+  border-radius: var(--radius);
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 500;
+  padding: 0.55rem 1.1rem;
+  text-decoration: none;
+  transition: opacity 0.15s;
+}
+
+.newBtn:hover {
+  opacity: 0.85;
+  text-decoration: none;
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.filterChip {
+  background: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: 20px;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  font-size: 0.82rem;
+  padding: 0.35rem 0.9rem;
+  transition: all 0.15s;
+}
+
+.filterChip:hover {
+  border-color: var(--color-accent);
+  color: var(--color-text);
+}
+
+.filterChipActive {
+  background: rgba(74, 158, 255, 0.12);
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1rem;
+}
+
+.empty {
+  color: var(--color-text-muted);
+  text-align: center;
+  padding: 4rem 0;
+  grid-column: 1 / -1;
+}
+
+.loading {
+  color: var(--color-text-muted);
+  text-align: center;
+  padding: 4rem 0;
+}
+
+.error {
+  color: var(--color-error);
+  text-align: center;
+  padding: 2rem 0;
+}

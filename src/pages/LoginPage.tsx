@@ -2,14 +2,16 @@ import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { api } from '../lib/api'
+import { useAuth } from '../contexts/AuthContext'
 import styles from './LoginPage.module.css'
 
 function LoginPage() {
-  const navigate = useNavigate()
-  const [email, setEmail]       = useState('')
+  const navigate              = useNavigate()
+  const { login }             = useAuth()
+  const [email, setEmail]     = useState('')
   const [password, setPassword] = useState('')
-  const [error, setError]       = useState('')
-  const [loading, setLoading]   = useState(false)
+  const [error, setError]     = useState('')
+  const [loading, setLoading] = useState(false)
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
@@ -18,7 +20,7 @@ function LoginPage() {
 
     try {
       const res = await api.post('/auth/login', { email, password })
-      localStorage.setItem('token', res.token)
+      login(res.token, res.user)
       navigate('/')
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Anmeldung fehlgeschlagen')
