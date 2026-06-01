@@ -10,6 +10,7 @@ import TaskNewPage from './pages/TaskNewPage'
 import TaskDetailPage from './pages/TaskDetailPage'
 import ProfilePage from './pages/ProfilePage'
 import LeaderboardPage from './pages/LeaderboardPage'
+import SupportersPage from './pages/SupportersPage'
 
 function ProtectedRoute({ children }: { children: ReactNode }) {
   const { user, isLoading } = useAuth()
@@ -24,12 +25,16 @@ function App() {
       <BrowserRouter>
         <Navbar />
         <Routes>
+          {/* Öffentliche Routen */}
           <Route path="/"            element={<HomePage />} />
           <Route path="/login"       element={<LoginPage />} />
           <Route path="/register"    element={<RegisterPage />} />
-          <Route path="/tasks"       element={<ProtectedRoute><TasksPage /></ProtectedRoute>} />
+          <Route path="/tasks"       element={<TasksPage />} />
+          <Route path="/tasks/:id"   element={<TaskDetailPage />} />
+          <Route path="/supporters"  element={<SupportersPage />} />
+
+          {/* Geschützte Routen */}
           <Route path="/tasks/new"   element={<ProtectedRoute><TaskNewPage /></ProtectedRoute>} />
-          <Route path="/tasks/:id"   element={<ProtectedRoute><TaskDetailPage /></ProtectedRoute>} />
           <Route path="/profile"     element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
           <Route path="/leaderboard" element={<ProtectedRoute><LeaderboardPage /></ProtectedRoute>} />
         </Routes>

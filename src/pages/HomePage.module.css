@@ -1,3 +1,4 @@
+/* Landing Page (Gast) */
 .page {
   min-height: calc(100vh - 56px);
   display: flex;
@@ -39,6 +40,201 @@
   flex-wrap: wrap;
 }
 
+/* Dashboard (eingeloggt) */
+.dashboard {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.welcomeBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.welcomeTitle {
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}
+
+.welcomeSub {
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+}
+
+/* Schnell-Stats */
+.statsRow {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.statCard {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 1rem 1.5rem;
+  flex: 1;
+  min-width: 100px;
+  text-align: center;
+}
+
+.statValue {
+  font-family: var(--font-mono);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-accent);
+  margin-bottom: 0.25rem;
+}
+
+.statLabel {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
+/* Abschnitt */
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.sectionHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.sectionTitle {
+  font-family: var(--font-heading);
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.sectionLink {
+  font-size: 0.82rem;
+  color: var(--color-accent);
+}
+
+.sectionLink:hover {
+  text-decoration: underline;
+}
+
+/* Aufgaben-Grid */
+.taskGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 0.75rem;
+}
+
+.taskCard {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 1rem;
+  text-decoration: none;
+  color: var(--color-text);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  transition: border-color 0.15s;
+}
+
+.taskCard:hover {
+  border-color: var(--color-accent);
+  text-decoration: none;
+  color: var(--color-text);
+}
+
+.taskTitle {
+  font-weight: 500;
+  font-size: 0.92rem;
+  line-height: 1.4;
+}
+
+.taskMeta {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.taskPoints {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--color-accent);
+}
+
+.taskDiff {
+  font-size: 0.75rem;
+  color: var(--color-warning);
+  letter-spacing: 0.05em;
+}
+
+.taskCats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+}
+
+.taskCat {
+  font-size: 0.68rem;
+  color: var(--color-text-muted);
+  background: rgba(139, 148, 158, 0.1);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  padding: 0.1rem 0.4rem;
+}
+
+/* Schnell-Navigation */
+.quickNav {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.quickCard {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 1rem 1.5rem;
+  text-decoration: none;
+  color: var(--color-text);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  flex: 1;
+  min-width: 120px;
+  justify-content: center;
+  transition: border-color 0.15s;
+}
+
+.quickCard:hover {
+  border-color: var(--color-accent);
+  text-decoration: none;
+  color: var(--color-text);
+}
+
+.quickIcon {
+  font-size: 1.1rem;
+}
+
+.empty {
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+  padding: 1rem 0;
+}
+
+/* Shared buttons */
 .btnPrimary {
   background: var(--color-accent);
   border-radius: var(--radius);
@@ -47,11 +243,13 @@
   padding: 0.65rem 1.5rem;
   text-decoration: none;
   transition: opacity 0.15s;
+  white-space: nowrap;
 }
 
 .btnPrimary:hover {
   opacity: 0.85;
   text-decoration: none;
+  color: #fff;
 }
 
 .btnGhost {

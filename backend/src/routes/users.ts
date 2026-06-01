@@ -1,13 +1,12 @@
-import { Router, Response } from 'express'
+import { Router, Request, Response } from 'express'
 import mongoose from 'mongoose'
 import User from '../models/User'
 import auth, { AuthRequest } from '../middleware/auth'
 
 const router = Router()
-router.use(auth)
 
-// GET /api/users/leaderboard – Top 10 nach Scope gefiltert
-router.get('/leaderboard', async (req: AuthRequest, res: Response) => {
+// GET /api/users/leaderboard – Top 10 nach Scope gefiltert (Auth erforderlich)
+router.get('/leaderboard', auth, async (req: AuthRequest, res: Response) => {
   try {
     const scope = (req.query.scope as string) || 'country'
 
@@ -28,7 +27,6 @@ router.get('/leaderboard', async (req: AuthRequest, res: Response) => {
     } else if (scope === 'friends') {
       filter['_id'] = { $in: currentUser.friends }
     }
-    // scope === 'country' → kein zusätzlicher Filter
 
     const users = await User.find(filter)
       .sort({ points: -1 })
@@ -48,8 +46,49 @@ router.get('/leaderboard', async (req: AuthRequest, res: Response) => {
   }
 })
 
-// POST /api/users/friends/:id – Freund hinzufügen
-router.post('/friends/:id', async (req: AuthRequest, res: Response) => {
+// GET /api/users/supporters – Supporter-Liste abrufen (öffentlich)
+router.get('/supporters', async (_req: Request, res: Response) => {
+  try {
+    const supporters = await User.find({ 'supporterEntry.isActive': true })
+      .sort({ points: -1 })
+      .select('username points level supporterEntry')
+
+    res.json(
+      supporters.map(u => ({
+        id:             String(u._id),
+        username:       u.username,
+        points:         u.points,
+        level:          u.level,
+        supporterEntry: u.supporterEntry,
+      }))
+    )
+  } catch {
+    res.status(500).json({ message: 'Serverfehler' })
+  }
+})
+
+// PUT /api/users/supporter-entry – eigenen Supporter-Eintrag pflegen (Auth erforderlich)
+router.put('/supporter-entry', auth, async (req: AuthRequest, res: Response) => {
+  try {
+    const { bio, isActive } = req.body
+
+    const user = await User.findById(req.userId)
+    if (!user) {
+      res.status(404).json({ message: 'Nutzer nicht gefunden' })
+      return
+    }
+
+    user.supporterEntry = { bio: bio || '', isActive: Boolean(isActive) }
+    await user.save()
+
+    res.json({ message: 'Supporter-Eintrag aktualisiert', supporterEntry: user.supporterEntry })
+  } catch {
+    res.status(500).json({ message: 'Serverfehler' })
+  }
+})
+
+// POST /api/users/friends/:id – Freund hinzufügen (Auth erforderlich)
+router.post('/friends/:id', auth, async (req: AuthRequest, res: Response) => {
   try {
     const friendId = req.params.id
 
@@ -85,8 +124,8 @@ router.post('/friends/:id', async (req: AuthRequest, res: Response) => {
   }
 })
 
-// DELETE /api/users/friends/:id – Freund entfernen
-router.delete('/friends/:id', async (req: AuthRequest, res: Response) => {
+// DELETE /api/users/friends/:id – Freund entfernen (Auth erforderlich)
+router.delete('/friends/:id', auth, async (req: AuthRequest, res: Response) => {
   try {
     const friendId = req.params.id
 

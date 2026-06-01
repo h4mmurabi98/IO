@@ -1,4 +1,4 @@
-import { Router, Response } from 'express'
+import { Router, Request, Response } from 'express'
 import mongoose from 'mongoose'
 import Task, { ITask } from '../models/Task'
 import User from '../models/User'
@@ -6,7 +6,6 @@ import auth, { AuthRequest } from '../middleware/auth'
 import { calcLevel } from '../utils/levels'
 
 const router = Router()
-router.use(auth)
 
 // Hilfsfunktion: MongoDB-Objekt in API-Response umwandeln
 const formatTask = (task: ITask) => ({
@@ -25,8 +24,8 @@ const formatTask = (task: ITask) => ({
   createdAt:       task.createdAt,
 })
 
-// GET /api/tasks – offene Tasks abrufen, optional nach Kategorien filtern
-router.get('/', async (req: AuthRequest, res: Response) => {
+// GET /api/tasks – öffentlich, optional nach Kategorien filtern
+router.get('/', async (req: Request, res: Response) => {
   try {
     const filter: Record<string, unknown> = { status: 'open' }
 
@@ -43,13 +42,12 @@ router.get('/', async (req: AuthRequest, res: Response) => {
   }
 })
 
-// POST /api/tasks – neuen Task erstellen
+// POST /api/tasks – neuen Task erstellen (Auth erforderlich)
 // pointValue wird vom Backend berechnet (difficulty * durationMinutes)
-router.post('/', async (req: AuthRequest, res: Response) => {
+router.post('/', auth, async (req: AuthRequest, res: Response) => {
   try {
     const { title, description, categories, difficulty, durationMinutes, location } = req.body
 
-    // Eingaben validieren
     if (!Array.isArray(categories) || categories.length === 0) {
       res.status(400).json({ message: 'Mindestens eine Kategorie erforderlich' })
       return
@@ -79,8 +77,8 @@ router.post('/', async (req: AuthRequest, res: Response) => {
   }
 })
 
-// GET /api/tasks/:id – einzelnen Task abrufen
-router.get('/:id', async (req: AuthRequest, res: Response) => {
+// GET /api/tasks/:id – öffentlich
+router.get('/:id', async (req: Request, res: Response) => {
   try {
     const task = await Task.findById(req.params.id)
     if (!task) {
@@ -93,8 +91,8 @@ router.get('/:id', async (req: AuthRequest, res: Response) => {
   }
 })
 
-// PUT /api/tasks/:id/assign – Task annehmen
-router.put('/:id/assign', async (req: AuthRequest, res: Response) => {
+// PUT /api/tasks/:id/assign – Task annehmen (Auth erforderlich)
+router.put('/:id/assign', auth, async (req: AuthRequest, res: Response) => {
   try {
     const task = await Task.findById(req.params.id)
     if (!task) {
@@ -120,8 +118,8 @@ router.put('/:id/assign', async (req: AuthRequest, res: Response) => {
   }
 })
 
-// PUT /api/tasks/:id/complete – Task abschließen + Punkte & Level aktualisieren
-router.put('/:id/complete', async (req: AuthRequest, res: Response) => {
+// PUT /api/tasks/:id/complete – Task abschließen + Punkte & Level aktualisieren (Auth erforderlich)
+router.put('/:id/complete', auth, async (req: AuthRequest, res: Response) => {
   try {
     const task = await Task.findById(req.params.id)
     if (!task) {

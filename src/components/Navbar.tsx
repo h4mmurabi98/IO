@@ -1,10 +1,12 @@
 import { NavLink, useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
+import { useTheme } from '../hooks/useTheme'
 import styles from './Navbar.module.css'
 
 function Navbar() {
   const { user, logout } = useAuth()
   const navigate          = useNavigate()
+  const { theme, toggle } = useTheme()
 
   const handleLogout = () => {
     logout()
@@ -23,16 +25,26 @@ function Navbar() {
           {user ? (
             <>
               <NavLink to="/tasks"       className={linkClass}>Aufgaben</NavLink>
+              <NavLink to="/supporters"  className={linkClass}>Supporter</NavLink>
               <NavLink to="/leaderboard" className={linkClass}>Rangliste</NavLink>
               <NavLink to="/profile"     className={linkClass}>Profil</NavLink>
               <span className={styles.userPoints}>⚡ {user.points}</span>
-              <button className={styles.logoutBtn} onClick={handleLogout}>Abmelden</button>
             </>
           ) : (
             <>
-              <NavLink to="/login"    className={linkClass}>Anmelden</NavLink>
-              <NavLink to="/register" className={linkClass}>Registrieren</NavLink>
+              <NavLink to="/tasks"      className={linkClass}>Aufgaben</NavLink>
+              <NavLink to="/supporters" className={linkClass}>Supporter</NavLink>
+              <NavLink to="/login"      className={linkClass}>Anmelden</NavLink>
+              <NavLink to="/register"   className={linkClass}>Registrieren</NavLink>
             </>
+          )}
+
+          <button className={styles.themeBtn} onClick={toggle} title="Design wechseln">
+            {theme === 'dark' ? '☀' : '☽'}
+          </button>
+
+          {user && (
+            <button className={styles.logoutBtn} onClick={handleLogout}>Abmelden</button>
           )}
         </div>
       </div>

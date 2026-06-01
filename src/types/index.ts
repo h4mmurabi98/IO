@@ -7,6 +7,26 @@ export interface User {
   badges: string[]
 }
 
+export interface UserProfile extends User {
+  location: {
+    country?:      string
+    state?:        string
+    district?:     string
+    neighborhood?: string
+  }
+  createdAt: string
+  seekerStats: {
+    tasksCreated:   number
+    tasksCompleted: number
+    avgDifficulty:  number
+  }
+  supporterStats: {
+    tasksAccepted:  number
+    tasksCompleted: number
+    pointsEarned:   number
+  }
+}
+
 export type TaskCategory =
   | 'Geistig'
   | 'Körperlich'
@@ -40,4 +60,22 @@ export interface Task {
   location: string | null
   completedAt: string | null
   createdAt: string
+}
+
+export interface LeaderboardEntry {
+  id:       string
+  username: string
+  points:   number
+  level:    number
+}
+
+export interface SupporterEntry {
+  id:       string
+  username: string
+  points:   number
+  level:    number
+  supporterEntry: {
+    bio:      string
+    isActive: boolean
+  }
 }

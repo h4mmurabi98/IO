@@ -8,16 +8,22 @@ interface ILocation {
   neighborhood?: string
 }
 
+interface ISupporterEntry {
+  bio:      string
+  isActive: boolean
+}
+
 export interface IUser extends Document {
-  username:  string
-  email:     string
-  password:  string
-  points:    number
-  level:     number
-  badges:    string[]
-  friends:   mongoose.Types.ObjectId[]
-  location:  ILocation
-  createdAt: Date
+  username:       string
+  email:          string
+  password:       string
+  points:         number
+  level:          number
+  badges:         string[]
+  friends:        mongoose.Types.ObjectId[]
+  location:       ILocation
+  supporterEntry: ISupporterEntry | null
+  createdAt:      Date
   comparePassword(password: string): Promise<boolean>
 }
 
@@ -35,6 +41,10 @@ const userSchema = new Schema<IUser>(
       state:        { type: String },
       district:     { type: String },
       neighborhood: { type: String },
+    },
+    supporterEntry: {
+      type: new Schema({ bio: String, isActive: Boolean }, { _id: false }),
+      default: null,
     },
   },
   { timestamps: true }
