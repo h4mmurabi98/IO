@@ -1,9 +1,9 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import type { FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { api } from '../lib/api'
 import { TASK_CATEGORIES } from '../types'
-import type { TaskCategory } from '../types'
+import type { TaskCategory, SupporterEntry } from '../types'
 import styles from './TaskNewPage.module.css'
 
 function TaskNewPage() {
@@ -18,10 +18,28 @@ function TaskNewPage() {
   const [error, setError]               = useState('')
   const [loading, setLoading]           = useState(false)
 
+  // Supporter-Einladung
+  const [supporters, setSupporters]     = useState<SupporterEntry[]>([])
+  const [invited, setInvited]           = useState<string[]>([])
+
+  useEffect(() => {
+    api.get('/users/supporters')
+      .then((data: SupporterEntry[]) => setSupporters(data))
+      .catch(() => setSupporters([]))
+  }, [])
+
   const toggleCategory = (cat: TaskCategory) => {
     setCategories(prev =>
       prev.includes(cat) ? prev.filter(c => c !== cat) : [...prev, cat]
     )
+  }
+
+  const toggleInvite = (id: string) => {
+    setInvited(prev => {
+      if (prev.includes(id)) return prev.filter(i => i !== id)
+      if (prev.length >= 3) return prev
+      return [...prev, id]
+    })
   }
 
   const previewPoints = difficulty > 0 && Number(durationMinutes) > 0
@@ -50,6 +68,7 @@ function TaskNewPage() {
         difficulty,
         durationMinutes: Number(durationMinutes),
         location: location.trim() || undefined,
+        invitedSupporters: invited,
       })
       navigate('/tasks')
     } catch (err) {
@@ -61,7 +80,7 @@ function TaskNewPage() {
 
   return (
     <div className={styles.page}>
-      <h1 className={styles.title}>Neue Aufgabe erstellen</h1>
+      <h1 className={styles.title}>Neues Hilfegesuch erstellen</h1>
 
       <form className={styles.form} onSubmit={handleSubmit}>
         <div className={styles.field}>
@@ -72,7 +91,7 @@ function TaskNewPage() {
             value={title}
             onChange={e => setTitle(e.target.value)}
             required
-            placeholder="Kurze Beschreibung der Aufgabe"
+            placeholder="Kurze Beschreibung des Hilfegesuchs"
           />
         </div>
 
@@ -145,6 +164,42 @@ function TaskNewPage() {
           />
         </div>
 
+        {/* Supporter einladen */}
+        {supporters.length > 0 && (
+          <div className={styles.field}>
+            <label>
+              Supporter direkt einladen
+              <span className={styles.labelHint}> — bis zu 3, optional</span>
+            </label>
+            <p className={styles.fieldHint}>
+              Eingeladene Supporter werden beim Hilfegesuch besonders hervorgehoben.
+            </p>
+            <div className={styles.supporterList}>
+              {supporters.map(s => {
+                const isSelected = invited.includes(s.id)
+                const isDisabled = !isSelected && invited.length >= 3
+                return (
+                  <button
+                    key={s.id}
+                    type="button"
+                    className={`${styles.supporterChip} ${isSelected ? styles.supporterChipActive : ''} ${isDisabled ? styles.supporterChipDisabled : ''}`}
+                    onClick={() => !isDisabled && toggleInvite(s.id)}
+                  >
+                    <span className={styles.chipName}>{s.username}</span>
+                    <span className={styles.chipLevel}>LVL {s.level}</span>
+                    {isSelected && <span className={styles.chipCheck}>✓</span>}
+                  </button>
+                )
+              })}
+            </div>
+            {invited.length > 0 && (
+              <p className={styles.invitedNote}>
+                {invited.length} Supporter eingeladen
+              </p>
+            )}
+          </div>
+        )}
+
         {previewPoints !== null && (
           <div className={styles.preview}>
             Punktwert: <span className={styles.previewPoints}>⚡ {previewPoints}</span>
@@ -157,7 +212,7 @@ function TaskNewPage() {
         {error && <p className={styles.error}>{error}</p>}
 
         <button className={styles.submit} type="submit" disabled={loading}>
-          {loading ? 'Wird gespeichert…' : 'Aufgabe erstellen'}
+          {loading ? 'Wird gespeichert…' : 'Hilfegesuch erstellen'}
         </button>
       </form>
     </div>

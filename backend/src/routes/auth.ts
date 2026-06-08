@@ -92,6 +92,8 @@ router.get('/me', auth, async (req: AuthRequest, res: Response) => {
       id:        String(user._id),
       username:  user.username,
       email:     user.email,
+      fullName:  user.fullName,
+      avatar:    user.avatar,
       points:    user.points,
       level:     user.level,
       badges:    user.badges,
@@ -109,6 +111,34 @@ router.get('/me', auth, async (req: AuthRequest, res: Response) => {
       },
     })
   } catch (err) {
+    res.status(500).json({ message: 'Serverfehler' })
+  }
+})
+
+// PUT /api/auth/profile – Profil aktualisieren (fullName, avatar)
+router.put('/profile', auth, async (req: AuthRequest, res: Response) => {
+  try {
+    const { fullName, avatar } = req.body
+
+    const user = await User.findById(req.userId)
+    if (!user) {
+      res.status(404).json({ message: 'Nutzer nicht gefunden' })
+      return
+    }
+
+    if (typeof fullName === 'string') user.fullName = fullName.trim()
+    // Avatar als base64 Data-URL – max. ~400KB (um MongoDB-Limits zu vermeiden)
+    if (typeof avatar === 'string') {
+      if (avatar.length > 550_000) {
+        res.status(400).json({ message: 'Bild zu groß (max. 400 KB)' })
+        return
+      }
+      user.avatar = avatar
+    }
+
+    await user.save()
+    res.json({ message: 'Profil aktualisiert', fullName: user.fullName, avatar: user.avatar })
+  } catch {
     res.status(500).json({ message: 'Serverfehler' })
   }
 })

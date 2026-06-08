@@ -1,0 +1,459 @@
+.page {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 2rem 1.5rem 4rem;
+}
+
+/* ── Hero ─────────────────────────────────────────────────────────── */
+.hero {
+  background: linear-gradient(135deg, #0d2a5a 0%, #1a1f2e 100%);
+  border: 1px solid rgba(74, 158, 255, 0.25);
+  border-radius: 12px;
+  padding: 2rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.heroTitle {
+  font-family: var(--font-heading);
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 0.4rem;
+}
+
+.heroSub {
+  color: rgba(255,255,255,0.65);
+  font-size: 0.88rem;
+  line-height: 1.5;
+  max-width: 440px;
+}
+
+.heroRight {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.5rem;
+}
+
+.heroStats {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: var(--radius);
+  padding: 0.75rem 1.25rem;
+}
+
+.heroStat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+}
+
+.heroStatVal {
+  font-family: var(--font-mono);
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.heroStatLabel {
+  font-size: 0.68rem;
+  color: rgba(255,255,255,0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.heroDivider {
+  width: 1px;
+  height: 32px;
+  background: rgba(255,255,255,0.12);
+}
+
+.heroHint {
+  font-size: 0.72rem;
+  color: rgba(255,255,255,0.4);
+}
+
+.loginBtn {
+  background: var(--color-accent);
+  border-radius: var(--radius);
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 500;
+  padding: 0.65rem 1.25rem;
+  text-decoration: none;
+  transition: opacity 0.15s;
+}
+.loginBtn:hover { opacity: 0.85; text-decoration: none; }
+
+/* ── How-To-Leiste ────────────────────────────────────────────────── */
+.howTo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 0.9rem 1.25rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.howStep {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.howIcon { font-size: 1.3rem; }
+
+.howTitle {
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.howDesc {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
+
+.howArrow {
+  color: var(--color-text-muted);
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+/* ── Kategorie-Filter ─────────────────────────────────────────────── */
+.catFilter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 2rem;
+}
+
+.catBtn {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 20px;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  font-size: 0.8rem;
+  padding: 0.3rem 0.8rem;
+  transition: all 0.15s;
+}
+
+.catBtn:hover { border-color: var(--color-accent); color: var(--color-text); }
+
+.catBtnActive {
+  background: rgba(74,158,255,0.12);
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+/* ── Tier-Sektion ─────────────────────────────────────────────────── */
+.tier { margin-bottom: 2.5rem; }
+
+.tierHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin-bottom: 0.9rem;
+  flex-wrap: wrap;
+}
+
+.tierBadge {
+  border: 2px solid;
+  border-radius: 6px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.15rem 0.5rem;
+  flex-shrink: 0;
+}
+
+.tierLabel {
+  font-family: var(--font-heading);
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.tierSep { flex: 1; height: 1px; background: var(--color-border); min-width: 16px; }
+
+.tierOpen {
+  font-size: 0.75rem;
+  color: var(--color-success);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.tierLocked {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+/* ── Reward-Grid ──────────────────────────────────────────────────── */
+.rewardsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 1rem;
+}
+
+/* ── Reward-Karte ─────────────────────────────────────────────────── */
+.rewardCard {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 1.15rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  position: relative;
+  transition: border-color 0.15s, transform 0.15s;
+}
+
+.rewardCard:hover:not(.rewardCardLocked) {
+  border-color: var(--color-accent);
+  transform: translateY(-2px);
+}
+
+.rewardCardLocked { opacity: 0.5; }
+
+.rewardCardUpgrade {
+  border-style: dashed;
+}
+
+.rewardTag {
+  align-self: flex-start;
+  border: 1px solid;
+  border-radius: 4px;
+  font-size: 0.68rem;
+  font-weight: 600;
+  padding: 0.08rem 0.4rem;
+}
+
+.upgradeLabel {
+  align-self: flex-start;
+  background: rgba(163,113,247,0.12);
+  border: 1px solid rgba(163,113,247,0.3);
+  border-radius: 4px;
+  color: #a371f7;
+  font-size: 0.65rem;
+  font-weight: 600;
+  padding: 0.08rem 0.4rem;
+}
+
+.rewardIcon {
+  font-size: 1.9rem;
+  line-height: 1;
+  margin: 0.15rem 0;
+}
+
+.rewardTitle {
+  font-family: var(--font-heading);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.rewardDesc {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  line-height: 1.5;
+  flex: 1;
+}
+
+/* ── Preis-Tabelle ────────────────────────────────────────────────── */
+.pricing {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  padding: 0.5rem 0.7rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-top: 0.2rem;
+}
+
+.pricingRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.pricingLabel {
+  font-size: 0.72rem;
+  color: var(--color-text-muted);
+}
+
+.pricingNormal {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  text-decoration: line-through;
+}
+
+.pricingReal {
+  font-size: 0.8rem;
+  color: var(--color-warning);
+  font-weight: 600;
+}
+
+.pricingPoints {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--color-accent);
+}
+
+.pricingInsuff { color: var(--color-error); }
+
+.upgradeHint {
+  font-size: 0.72rem;
+  color: var(--color-text-muted);
+  font-style: italic;
+}
+
+/* ── Buttons ──────────────────────────────────────────────────────── */
+.redeemBtn {
+  background: var(--color-accent);
+  border: none;
+  border-radius: var(--radius);
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin-top: 0.25rem;
+  padding: 0.5rem;
+  transition: opacity 0.15s;
+  width: 100%;
+}
+
+.redeemBtn:hover:not(.redeemBtnOff) { opacity: 0.85; }
+
+.redeemBtnOff {
+  background: var(--color-border);
+  color: var(--color-text-muted);
+  cursor: not-allowed;
+}
+
+.redeemBtnLink {
+  background: var(--color-border);
+  border-radius: var(--radius);
+  color: var(--color-text-muted);
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin-top: 0.25rem;
+  padding: 0.5rem;
+  text-align: center;
+  text-decoration: none;
+  transition: opacity 0.15s;
+}
+
+.lockBar {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  color: var(--color-text-muted);
+  font-size: 0.8rem;
+  margin-top: 0.25rem;
+  padding: 0.45rem;
+  text-align: center;
+}
+
+/* ── Modal ────────────────────────────────────────────────────────── */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  padding: 1rem;
+}
+
+.modal {
+  background: var(--color-surface);
+  border: 1px solid var(--color-accent);
+  border-radius: 12px;
+  max-width: 400px;
+  padding: 2rem;
+  text-align: center;
+  width: 100%;
+}
+
+.modalIcon  { font-size: 2.8rem; margin-bottom: 0.5rem; }
+
+.modalTitle {
+  font-family: var(--font-heading);
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 0.4rem;
+}
+
+.modalDesc {
+  color: var(--color-text-muted);
+  font-size: 0.87rem;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+.modalPricing {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.modalPriceRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modalPriceLabel { font-size: 0.78rem; color: var(--color-text-muted); }
+.modalNormal     { font-size: 0.82rem; color: var(--color-text-muted); text-decoration: line-through; }
+.modalReal       { font-size: 0.9rem;  color: var(--color-warning); font-weight: 600; }
+
+.modalPoints {
+  font-family: var(--font-mono);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-accent);
+}
+
+.modalNote {
+  background: rgba(74,158,255,0.07);
+  border: 1px solid rgba(74,158,255,0.15);
+  border-radius: var(--radius);
+  color: var(--color-text-muted);
+  font-size: 0.8rem;
+  line-height: 1.5;
+  margin-bottom: 1.25rem;
+  padding: 0.7rem 0.9rem;
+  text-align: left;
+}
+
+.modalClose {
+  background: var(--color-accent);
+  border: none;
+  border-radius: var(--radius);
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 500;
+  padding: 0.6rem 1.5rem;
+  transition: opacity 0.15s;
+}
+.modalClose:hover { opacity: 0.85; }

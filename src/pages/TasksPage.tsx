@@ -41,8 +41,8 @@ function TasksPage() {
   return (
     <div className={styles.page}>
       <div className={styles.header}>
-        <h1 className={styles.title}>Aufgaben</h1>
-        <Link to="/tasks/new" className={styles.newBtn}>+ Neue Aufgabe</Link>
+        <h1 className={styles.title}>Hilfegesuche</h1>
+        <Link to="/tasks/new" className={styles.newBtn}>+ Neues Hilfegesuch</Link>
       </div>
 
       <div className={styles.filters}>
@@ -63,7 +63,7 @@ function TasksPage() {
       {!loading && !error && (
         <div className={styles.grid}>
           {tasks.length === 0 ? (
-            <p className={styles.empty}>Keine offenen Aufgaben gefunden.</p>
+            <p className={styles.empty}>Keine offenen Hilfegesuche gefunden.</p>
           ) : (
             tasks.map(task => <TaskCard key={task.id} task={task} />)
           )}

@@ -11,8 +11,12 @@
 
 .card:hover {
   border-color: var(--color-accent);
-  background: #1c2330;
+  background: var(--color-surface-hover, rgba(74, 158, 255, 0.05));
   text-decoration: none;
+}
+
+.card:hover .title {
+  color: var(--color-text);
 }
 
 .title {

@@ -126,8 +126,42 @@
 
 .actions {
   display: flex;
+  flex-direction: column;
   gap: 0.75rem;
   margin-top: 0.5rem;
+}
+
+.timerBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.timerRow {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 0.5rem 0.85rem;
+}
+
+.timerLabel {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
+.timerValue {
+  font-family: var(--font-mono);
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--color-accent);
+}
+
+.timerHint {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
 }
 
 .btnPrimary {
@@ -197,6 +231,17 @@
   color: var(--color-error);
   font-size: 0.875rem;
   margin-top: 0.5rem;
+}
+
+.invitedBanner {
+  background: rgba(74, 158, 255, 0.1);
+  border: 1px solid var(--color-accent);
+  border-radius: var(--radius);
+  color: var(--color-accent);
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-bottom: 1rem;
+  padding: 0.6rem 1rem;
 }
 
 .loading {

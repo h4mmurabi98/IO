@@ -150,4 +150,29 @@ router.delete('/friends/:id', auth, async (req: AuthRequest, res: Response) => {
   }
 })
 
+// GET /api/users/:id – öffentliches Profil (MUSS als letztes stehen)
+router.get('/:id', async (req: Request, res: Response) => {
+  try {
+    const user = await User.findById(req.params.id)
+    if (!user) {
+      res.status(404).json({ message: 'Nutzer nicht gefunden' })
+      return
+    }
+    res.json({
+      id:             String(user._id),
+      username:       user.username,
+      fullName:       user.fullName,
+      avatar:         user.avatar,
+      points:         user.points,
+      level:          user.level,
+      badges:         user.badges,
+      location:       user.location,
+      supporterEntry: user.supporterEntry,
+      createdAt:      user.createdAt,
+    })
+  } catch {
+    res.status(500).json({ message: 'Serverfehler' })
+  }
+})
+
 export default router

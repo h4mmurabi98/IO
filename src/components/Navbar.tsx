@@ -24,15 +24,16 @@ function Navbar() {
         <div className={styles.links}>
           {user ? (
             <>
-              <NavLink to="/tasks"       className={linkClass}>Aufgaben</NavLink>
+              <NavLink to="/tasks"       className={linkClass}>Hilfegesuche</NavLink>
               <NavLink to="/supporters"  className={linkClass}>Supporter</NavLink>
+              <NavLink to="/rewards"     className={linkClass}>Prämien</NavLink>
               <NavLink to="/leaderboard" className={linkClass}>Rangliste</NavLink>
               <NavLink to="/profile"     className={linkClass}>Profil</NavLink>
               <span className={styles.userPoints}>⚡ {user.points}</span>
             </>
           ) : (
             <>
-              <NavLink to="/tasks"      className={linkClass}>Aufgaben</NavLink>
+              <NavLink to="/tasks"      className={linkClass}>Hilfegesuche</NavLink>
               <NavLink to="/supporters" className={linkClass}>Supporter</NavLink>
               <NavLink to="/login"      className={linkClass}>Anmelden</NavLink>
               <NavLink to="/register"   className={linkClass}>Registrieren</NavLink>

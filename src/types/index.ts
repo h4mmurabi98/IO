@@ -1,10 +1,12 @@
 export interface User {
-  id: string
+  id:       string
   username: string
-  email: string
-  points: number
-  level: number
-  badges: string[]
+  email:    string
+  fullName: string
+  avatar:   string
+  points:   number
+  level:    number
+  badges:   string[]
 }
 
 export interface UserProfile extends User {
@@ -14,6 +16,7 @@ export interface UserProfile extends User {
     district?:     string
     neighborhood?: string
   }
+  supporterEntry: { bio: string; isActive: boolean } | null
   createdAt: string
   seekerStats: {
     tasksCreated:   number
@@ -25,6 +28,24 @@ export interface UserProfile extends User {
     tasksCompleted: number
     pointsEarned:   number
   }
+}
+
+export interface PublicUser {
+  id:             string
+  username:       string
+  fullName:       string
+  avatar:         string
+  points:         number
+  level:          number
+  badges:         string[]
+  location: {
+    country?:      string
+    state?:        string
+    district?:     string
+    neighborhood?: string
+  }
+  supporterEntry: { bio: string; isActive: boolean } | null
+  createdAt:      string
 }
 
 export type TaskCategory =
@@ -47,19 +68,20 @@ export const TASK_CATEGORIES: TaskCategory[] = [
 export type TaskStatus = 'open' | 'assigned' | 'done'
 
 export interface Task {
-  id: string
-  title: string
-  description: string
-  categories: TaskCategory[]
-  createdBy: string
-  assignedTo: string | null
-  status: TaskStatus
-  difficulty: number
-  durationMinutes: number
-  pointValue: number
-  location: string | null
-  completedAt: string | null
-  createdAt: string
+  id:                 string
+  title:              string
+  description:        string
+  categories:         TaskCategory[]
+  createdBy:          string
+  assignedTo:         string | null
+  invitedSupporters:  string[]
+  status:             TaskStatus
+  difficulty:         number
+  durationMinutes:    number
+  pointValue:         number
+  location:           string | null
+  completedAt:        string | null
+  createdAt:          string
 }
 
 export interface LeaderboardEntry {
@@ -72,10 +94,29 @@ export interface LeaderboardEntry {
 export interface SupporterEntry {
   id:       string
   username: string
+  fullName: string
+  avatar:   string
   points:   number
   level:    number
   supporterEntry: {
     bio:      string
     isActive: boolean
+  }
+}
+
+export interface SupporterOffer {
+  id:          string
+  title:       string
+  description: string
+  categories:  TaskCategory[]
+  location:    string
+  status:      'active' | 'done'
+  createdAt:   string
+  createdBy: {
+    id:       string
+    username: string
+    level:    number
+    points:   number
+    avatar:   string
   }
 }

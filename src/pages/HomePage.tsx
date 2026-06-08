@@ -23,7 +23,7 @@ function Dashboard() {
           <h1 className={styles.welcomeTitle}>Willkommen zurück, {user!.username}!</h1>
           <p className={styles.welcomeSub}>Stufe {user!.level} · ⚡ {user!.points} Punkte</p>
         </div>
-        <Link to="/tasks/new" className={styles.btnPrimary}>+ Aufgabe erstellen</Link>
+        <Link to="/tasks/new" className={styles.btnPrimary}>+ Hilfegesuch erstellen</Link>
       </div>
 
       {/* Schnell-Stats */}
@@ -45,12 +45,12 @@ function Dashboard() {
       {/* Neueste offene Aufgaben */}
       <div className={styles.section}>
         <div className={styles.sectionHead}>
-          <h2 className={styles.sectionTitle}>Offene Aufgaben</h2>
+          <h2 className={styles.sectionTitle}>Offene Hilfegesuche</h2>
           <Link to="/tasks" className={styles.sectionLink}>Alle ansehen →</Link>
         </div>
 
         {recentTasks.length === 0 ? (
-          <p className={styles.empty}>Keine offenen Aufgaben vorhanden.</p>
+          <p className={styles.empty}>Keine offenen Hilfegesuche vorhanden.</p>
         ) : (
           <div className={styles.taskGrid}>
             {recentTasks.map(t => (
@@ -97,7 +97,7 @@ function LandingPage() {
         <h1 className={styles.logo}>IO</h1>
         <p className={styles.tagline}>Gemeinsam helfen – Punkte sammeln – Stufen aufsteigen</p>
         <p className={styles.desc}>
-          Stell Aufgaben ein, finde Unterstützung in deiner Umgebung und werde für deine Hilfe belohnt.
+          Stell Hilfegesuche ein, finde Unterstützung in deiner Umgebung und werde für deine Hilfe belohnt.
         </p>
         <div className={styles.actions}>
           <Link to="/register" className={styles.btnPrimary}>Jetzt registrieren</Link>

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { api } from '../lib/api'
 import type { UserProfile } from '../types'
 import styles from './ProfilePage.module.css'
@@ -11,14 +11,47 @@ function ProfilePage() {
   const [saving, setSaving]       = useState(false)
   const [savedMsg, setSavedMsg]   = useState('')
 
+  // Profil-Bearbeitung
+  const [fullName, setFullName]   = useState('')
+  const [avatar, setAvatar]       = useState('')
+  const [savingProfile, setSavingProfile] = useState(false)
+  const fileRef = useRef<HTMLInputElement>(null)
+
   useEffect(() => {
     api.get('/auth/me')
       .then((data: UserProfile) => {
         setProfile(data)
+        setBio(data.supporterEntry?.bio ?? '')
+        setIsActive(data.supporterEntry?.isActive ?? false)
+        setFullName(data.fullName ?? '')
+        setAvatar(data.avatar ?? '')
       })
-      .catch(() => {/* Fehler ignorieren */})
+      .catch(() => {})
       .finally(() => setLoading(false))
   }, [])
+
+  const handleAvatarFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    if (file.size > 400_000) {
+      alert('Bild zu groß. Bitte unter 400 KB wählen.')
+      return
+    }
+    const reader = new FileReader()
+    reader.onload = ev => setAvatar(ev.target?.result as string)
+    reader.readAsDataURL(file)
+  }
+
+  const handleSaveProfile = async () => {
+    setSavingProfile(true)
+    setSavedMsg('')
+    try {
+      await api.put('/auth/profile', { fullName, avatar })
+      setSavedMsg('Profil gespeichert!')
+      setTimeout(() => setSavedMsg(''), 3000)
+    } catch { /* ignorieren */ }
+    finally { setSavingProfile(false) }
+  }
 
   const handleSaveSupporter = async () => {
     setSaving(true)
@@ -27,14 +60,13 @@ function ProfilePage() {
       await api.put('/users/supporter-entry', { bio, isActive })
       setSavedMsg('Gespeichert!')
       setTimeout(() => setSavedMsg(''), 3000)
-    } catch {/* ignorieren */}
+    } catch { /* ignorieren */ }
     finally { setSaving(false) }
   }
 
   if (loading) return <div className={styles.loading}>Lädt…</div>
   if (!profile) return <div className={styles.loading}>Profil nicht gefunden</div>
 
-  const initial = profile.username.charAt(0).toUpperCase()
   const memberDate = new Date(profile.createdAt).toLocaleDateString('de-DE', {
     year: 'numeric', month: 'long',
   })
@@ -43,9 +75,22 @@ function ProfilePage() {
     <div className={styles.page}>
       {/* Profilkopf */}
       <div className={styles.header}>
-        <div className={styles.avatar}>{initial}</div>
+        <div className={styles.avatarWrapper}>
+          {avatar ? (
+            <img src={avatar} alt="Avatar" className={styles.avatarImg} />
+          ) : (
+            <div className={styles.avatarInitial}>
+              {profile.username.charAt(0).toUpperCase()}
+            </div>
+          )}
+          <button className={styles.avatarEdit} onClick={() => fileRef.current?.click()} title="Bild ändern">
+            ✎
+          </button>
+          <input ref={fileRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handleAvatarFile} />
+        </div>
         <div className={styles.headerInfo}>
           <h1 className={styles.username}>{profile.username}</h1>
+          {profile.fullName && <p className={styles.fullName}>{profile.fullName}</p>}
           <div className={styles.headerMeta}>
             <span className={styles.level}>LVL {profile.level}</span>
             <span className={styles.points}>⚡ {profile.points}</span>
@@ -58,6 +103,29 @@ function ProfilePage() {
               ))}
             </div>
           )}
+        </div>
+      </div>
+
+      {/* Profil bearbeiten */}
+      <div className={styles.editSection}>
+        <div className={styles.editCard}>
+          <p className={styles.cardTitle}>Profil bearbeiten</p>
+          <div className={styles.editField}>
+            <label className={styles.editLabel}>Echter Name (optional)</label>
+            <input
+              className={styles.editInput}
+              type="text"
+              value={fullName}
+              onChange={e => setFullName(e.target.value)}
+              placeholder="Vor- und Nachname"
+            />
+          </div>
+          <div className={styles.editActions}>
+            <button className={styles.saveBtn} onClick={handleSaveProfile} disabled={savingProfile}>
+              {savingProfile ? 'Wird gespeichert…' : 'Profil speichern'}
+            </button>
+            {savedMsg && <span className={styles.successMsg}>{savedMsg}</span>}
+          </div>
         </div>
       </div>
 
@@ -106,6 +174,9 @@ function ProfilePage() {
       <div className={styles.supporterSection}>
         <div className={styles.supporterCard}>
           <p className={styles.cardTitle}>Supporter-Eintrag</p>
+          <p className={styles.supporterHint}>
+            Wenn aktiv, wirst du in der Supporter-Liste angezeigt und kannst Hilfegesuche annehmen.
+          </p>
           <div className={styles.supporterForm}>
             <textarea
               className={styles.textarea}
@@ -125,7 +196,6 @@ function ProfilePage() {
             <button className={styles.saveBtn} onClick={handleSaveSupporter} disabled={saving}>
               {saving ? 'Wird gespeichert…' : 'Speichern'}
             </button>
-            {savedMsg && <span className={styles.successMsg}>{savedMsg}</span>}
           </div>
         </div>
       </div>

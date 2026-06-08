@@ -144,3 +144,70 @@
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+.labelHint {
+  color: var(--color-text-muted);
+  font-size: 0.78rem;
+  font-weight: 400;
+}
+
+.fieldHint {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  line-height: 1.4;
+}
+
+.supporterList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-top: 0.25rem;
+}
+
+.supporterChip {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  cursor: pointer;
+  padding: 0.35rem 0.7rem;
+  transition: all 0.15s;
+}
+
+.supporterChip:hover:not(.supporterChipDisabled) {
+  border-color: var(--color-accent);
+}
+
+.supporterChipActive {
+  background: rgba(74, 158, 255, 0.1);
+  border-color: var(--color-accent);
+}
+
+.supporterChipDisabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.chipName {
+  font-size: 0.82rem;
+  color: var(--color-text);
+}
+
+.chipLevel {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--color-text-muted);
+}
+
+.chipCheck {
+  color: var(--color-accent);
+  font-size: 0.75rem;
+}
+
+.invitedNote {
+  font-size: 0.8rem;
+  color: var(--color-accent);
+  margin-top: 0.35rem;
+}

@@ -17,6 +17,8 @@ export interface IUser extends Document {
   username:       string
   email:          string
   password:       string
+  fullName:       string
+  avatar:         string
   points:         number
   level:          number
   badges:         string[]
@@ -32,6 +34,8 @@ const userSchema = new Schema<IUser>(
     username: { type: String, required: true, unique: true, trim: true },
     email:    { type: String, required: true, unique: true, lowercase: true, trim: true },
     password: { type: String, required: true, minlength: 6, select: false },
+    fullName: { type: String, default: '' },
+    avatar:   { type: String, default: '' },
     points:   { type: Number, default: 0 },
     level:    { type: Number, default: 0, max: 100 },
     badges:   { type: [String], default: [] },

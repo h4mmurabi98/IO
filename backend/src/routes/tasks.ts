@@ -9,19 +9,20 @@ const router = Router()
 
 // Hilfsfunktion: MongoDB-Objekt in API-Response umwandeln
 const formatTask = (task: ITask) => ({
-  id:              String(task._id),
-  title:           task.title,
-  description:     task.description,
-  categories:      task.categories,
-  createdBy:       String(task.createdBy),
-  assignedTo:      task.assignedTo ? String(task.assignedTo) : null,
-  status:          task.status,
-  difficulty:      task.difficulty,
-  durationMinutes: task.durationMinutes,
-  pointValue:      task.pointValue,
-  location:        task.location ?? null,
-  completedAt:     task.completedAt,
-  createdAt:       task.createdAt,
+  id:                 String(task._id),
+  title:              task.title,
+  description:        task.description,
+  categories:         task.categories,
+  createdBy:          String(task.createdBy),
+  assignedTo:         task.assignedTo ? String(task.assignedTo) : null,
+  invitedSupporters:  (task.invitedSupporters ?? []).map(id => String(id)),
+  status:             task.status,
+  difficulty:         task.difficulty,
+  durationMinutes:    task.durationMinutes,
+  pointValue:         task.pointValue,
+  location:           task.location ?? null,
+  completedAt:        task.completedAt,
+  createdAt:          task.createdAt,
 })
 
 // GET /api/tasks – öffentlich, optional nach Kategorien filtern
@@ -46,7 +47,7 @@ router.get('/', async (req: Request, res: Response) => {
 // pointValue wird vom Backend berechnet (difficulty * durationMinutes)
 router.post('/', auth, async (req: AuthRequest, res: Response) => {
   try {
-    const { title, description, categories, difficulty, durationMinutes, location } = req.body
+    const { title, description, categories, difficulty, durationMinutes, location, invitedSupporters } = req.body
 
     if (!Array.isArray(categories) || categories.length === 0) {
       res.status(400).json({ message: 'Mindestens eine Kategorie erforderlich' })
@@ -68,7 +69,8 @@ router.post('/', auth, async (req: AuthRequest, res: Response) => {
       difficulty,
       durationMinutes,
       location,
-      createdBy: req.userId,
+      createdBy:         req.userId,
+      invitedSupporters: Array.isArray(invitedSupporters) ? invitedSupporters.slice(0, 3) : [],
     })
 
     res.status(201).json(formatTask(task))
