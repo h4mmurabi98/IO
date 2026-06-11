@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import { api } from '../lib/api'
 import type { LeaderboardEntry } from '../types'
 import styles from './LeaderboardPage.module.css'
@@ -67,14 +68,16 @@ function LeaderboardPage() {
               const baseCls = place === 1 ? styles.base1 : place === 2 ? styles.base2 : styles.base3
               return (
                 <div key={entry.id} className={styles.podiumSpot}>
-                  <div className={styles.podiumCard}>
-                    <div className={`${styles.podiumRank} ${rankCls}`}>
-                      {place === 1 ? '🥇' : place === 2 ? '🥈' : '🥉'}
+                  <Link to={`/users/${entry.id}`} className={styles.podiumLink}>
+                    <div className={styles.podiumCard}>
+                      <div className={`${styles.podiumRank} ${rankCls}`}>
+                        {place === 1 ? '🥇' : place === 2 ? '🥈' : '🥉'}
+                      </div>
+                      <p className={styles.podiumUsername}>{entry.username}</p>
+                      <p className={styles.podiumPoints}>⚡ {entry.points}</p>
+                      <p className={styles.podiumLevel}>LVL {entry.level}</p>
                     </div>
-                    <p className={styles.podiumUsername}>{entry.username}</p>
-                    <p className={styles.podiumPoints}>⚡ {entry.points}</p>
-                    <p className={styles.podiumLevel}>LVL {entry.level}</p>
-                  </div>
+                  </Link>
                   <div className={`${styles.podiumBase} ${baseCls}`} />
                 </div>
               )
@@ -85,12 +88,14 @@ function LeaderboardPage() {
           {rest.length > 0 && (
             <div className={styles.list}>
               {rest.map((entry, i) => (
-                <div key={entry.id} className={styles.listRow}>
-                  <span className={styles.listRank}>{i + 4}</span>
-                  <span className={styles.listUsername}>{entry.username}</span>
-                  <span className={styles.listLevel}>LVL {entry.level}</span>
-                  <span className={styles.listPoints}>⚡ {entry.points}</span>
-                </div>
+                <Link key={entry.id} to={`/users/${entry.id}`} className={styles.listRowLink}>
+                  <div className={styles.listRow}>
+                    <span className={styles.listRank}>{i + 4}</span>
+                    <span className={styles.listUsername}>{entry.username}</span>
+                    <span className={styles.listLevel}>LVL {entry.level}</span>
+                    <span className={styles.listPoints}>⚡ {entry.points}</span>
+                  </div>
+                </Link>
               ))}
             </div>
           )}

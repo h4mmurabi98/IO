@@ -3,8 +3,6 @@ import mongoose, { Document, Schema } from 'mongoose'
 export type TaskCategory =
   | 'Geistig'
   | 'Körperlich'
-  | 'Haushalt & Handwerk'
-  | 'Digital & Technik'
   | 'Talent & Kreativität'
   | 'Sozial & Kommunikation'
 
@@ -29,8 +27,6 @@ export interface ITask extends Document {
 const CATEGORIES: TaskCategory[] = [
   'Geistig',
   'Körperlich',
-  'Haushalt & Handwerk',
-  'Digital & Technik',
   'Talent & Kreativität',
   'Sozial & Kommunikation',
 ]

@@ -5,6 +5,9 @@
 }
 
 .back {
+  background: none;
+  border: none;
+  cursor: pointer;
   color: var(--color-text-muted);
   font-size: 0.875rem;
   text-decoration: none;
@@ -13,6 +16,7 @@
   gap: 0.3rem;
   margin-bottom: 1.25rem;
   transition: color 0.15s;
+  padding: 0;
 }
 
 .back:hover { color: var(--color-text); text-decoration: none; }
@@ -139,6 +143,39 @@
 .locationText {
   color: var(--color-text-muted);
   font-size: 0.9rem;
+}
+
+.friendBtnAdd,
+.friendBtnRemove {
+  margin-top: 0.75rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 0.4rem 0.9rem;
+  transition: all 0.15s;
+}
+
+.friendBtnAdd {
+  background: rgba(74, 158, 255, 0.12);
+  border: 1px solid rgba(74, 158, 255, 0.4);
+  color: var(--color-accent);
+}
+
+.friendBtnAdd:hover:not(:disabled) {
+  background: rgba(74, 158, 255, 0.2);
+}
+
+.friendBtnRemove {
+  background: rgba(63, 185, 80, 0.1);
+  border: 1px solid rgba(63, 185, 80, 0.35);
+  color: var(--color-success);
+}
+
+.friendBtnRemove:hover:not(:disabled) {
+  background: rgba(255, 80, 80, 0.1);
+  border-color: rgba(255, 80, 80, 0.35);
+  color: #f85149;
 }
 
 .loading {

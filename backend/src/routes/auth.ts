@@ -9,7 +9,16 @@ const router = Router()
 // POST /api/auth/register
 router.post('/register', async (req: Request, res: Response) => {
   try {
-    const { username, email, password } = req.body
+    const { username, email, password, fullName, state } = req.body
+
+    if (!fullName || !String(fullName).trim()) {
+      res.status(400).json({ message: 'Echter Name ist erforderlich' })
+      return
+    }
+    if (!state || !String(state).trim()) {
+      res.status(400).json({ message: 'Wohnort ist erforderlich' })
+      return
+    }
 
     const exists = await User.findOne({ $or: [{ email }, { username }] })
     if (exists) {
@@ -17,7 +26,13 @@ router.post('/register', async (req: Request, res: Response) => {
       return
     }
 
-    const user = await User.create({ username, email, password })
+    const user = await User.create({
+      username,
+      email,
+      password,
+      fullName: String(fullName).trim(),
+      location: { country: 'Deutschland', state: String(state).trim() },
+    })
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET as string, { expiresIn: '7d' })
 
     res.status(201).json({
@@ -97,6 +112,7 @@ router.get('/me', auth, async (req: AuthRequest, res: Response) => {
       points:    user.points,
       level:     user.level,
       badges:    user.badges,
+      friends:   user.friends.map(id => String(id)),
       location:  user.location,
       createdAt: user.createdAt,
       seekerStats: {

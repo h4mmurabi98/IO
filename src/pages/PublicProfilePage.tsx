@@ -1,14 +1,18 @@
 import { useState, useEffect } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import { api } from '../lib/api'
+import { useAuth } from '../contexts/AuthContext'
 import type { PublicUser } from '../types'
 import styles from './PublicProfilePage.module.css'
 
 function PublicProfilePage() {
-  const { id }                  = useParams<{ id: string }>()
-  const [profile, setProfile]   = useState<PublicUser | null>(null)
-  const [loading, setLoading]   = useState(true)
-  const [error, setError]       = useState('')
+  const { id }                      = useParams<{ id: string }>()
+  const navigate                    = useNavigate()
+  const { user, refreshUser }       = useAuth()
+  const [profile, setProfile]       = useState<PublicUser | null>(null)
+  const [loading, setLoading]       = useState(true)
+  const [error, setError]           = useState('')
+  const [friendLoading, setFriendLoading] = useState(false)
 
   useEffect(() => {
     api.get(`/users/${id}`)
@@ -17,12 +21,30 @@ function PublicProfilePage() {
       .finally(() => setLoading(false))
   }, [id])
 
+  const isFriend = !!(user && profile && user.friends.includes(profile.id))
+  const isOwnProfile = user?.id === profile?.id
+
+  const handleFriendToggle = async () => {
+    if (!profile) return
+    setFriendLoading(true)
+    try {
+      if (isFriend) {
+        await api.delete(`/users/friends/${profile.id}`)
+      } else {
+        await api.post(`/users/friends/${profile.id}`, {})
+      }
+      await refreshUser()
+    } catch { /* ignorieren */ } finally {
+      setFriendLoading(false)
+    }
+  }
+
   if (loading) return <div className={styles.loading}>Lädt…</div>
   if (!profile || error) return (
     <div className={styles.loading}>
       {error || 'Profil nicht gefunden'}
       <br />
-      <Link to="/supporters" className={styles.back}>← Zurück zu Supportern</Link>
+      <button className={styles.back} onClick={() => navigate(-1)}>← Zurück</button>
     </div>
   )
 
@@ -32,7 +54,7 @@ function PublicProfilePage() {
 
   return (
     <div className={styles.page}>
-      <Link to="/supporters" className={styles.back}>← Zurück zu Supportern</Link>
+      <button className={styles.back} onClick={() => navigate(-1)}>← Zurück</button>
 
       <div className={styles.header}>
         <div className={styles.avatarWrapper}>
@@ -57,6 +79,15 @@ function PublicProfilePage() {
             <div className={styles.badges}>
               {profile.badges.map(b => <span key={b} className={styles.badge}>🏅 {b}</span>)}
             </div>
+          )}
+          {user && !isOwnProfile && (
+            <button
+              className={isFriend ? styles.friendBtnRemove : styles.friendBtnAdd}
+              onClick={handleFriendToggle}
+              disabled={friendLoading}
+            >
+              {friendLoading ? '…' : isFriend ? '✓ Freund entfernen' : '+ Als Freund hinzufügen'}
+            </button>
           )}
         </div>
       </div>

@@ -6,13 +6,15 @@ import { useAuth } from '../contexts/AuthContext'
 import styles from './RegisterPage.module.css'
 
 function RegisterPage() {
-  const navigate              = useNavigate()
-  const { login }             = useAuth()
+  const navigate                = useNavigate()
+  const { login }               = useAuth()
   const [username, setUsername] = useState('')
-  const [email, setEmail]     = useState('')
+  const [email, setEmail]       = useState('')
   const [password, setPassword] = useState('')
-  const [error, setError]     = useState('')
-  const [loading, setLoading] = useState(false)
+  const [fullName, setFullName] = useState('')
+  const [state, setState]       = useState('')
+  const [error, setError]       = useState('')
+  const [loading, setLoading]   = useState(false)
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
@@ -26,7 +28,9 @@ function RegisterPage() {
     setLoading(true)
 
     try {
-      const res = await api.post('/auth/register', { username, email, password })
+      const res = await api.post('/auth/register', {
+        username, email, password, fullName, state,
+      })
       login(res.token, res.user)
       navigate('/')
     } catch (err) {
@@ -44,6 +48,19 @@ function RegisterPage() {
 
         <form className={styles.form} onSubmit={handleSubmit}>
           <div className={styles.field}>
+            <label htmlFor="fullName">Echter Name</label>
+            <input
+              id="fullName"
+              type="text"
+              value={fullName}
+              onChange={e => setFullName(e.target.value)}
+              required
+              placeholder="Vor- und Nachname"
+              autoComplete="name"
+            />
+          </div>
+
+          <div className={styles.field}>
             <label htmlFor="username">Benutzername</label>
             <input
               id="username"
@@ -52,6 +69,19 @@ function RegisterPage() {
               onChange={e => setUsername(e.target.value)}
               required
               autoComplete="username"
+            />
+          </div>
+
+          <div className={styles.field}>
+            <label htmlFor="state">Wohnort</label>
+            <input
+              id="state"
+              type="text"
+              value={state}
+              onChange={e => setState(e.target.value)}
+              required
+              placeholder="z.B. Berlin, Bayern, Hamburg"
+              autoComplete="address-level1"
             />
           </div>
 

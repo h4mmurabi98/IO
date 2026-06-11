@@ -159,7 +159,7 @@ const seed = async () => {
     {
       title:           'WLAN-Router neu einrichten',
       description:     'Mein Router hat ein Firmware-Update bekommen und jetzt kommen keine Geräte mehr ins Netz. Ich brauche Hilfe beim Zurücksetzen und Neukonfigurieren.',
-      categories:      ['Digital & Technik'],
+      categories:      ['Geistig'],
       difficulty:      2, durationMinutes: 45,
       location:        'Berlin-Mitte',
       status:          'open',
@@ -195,7 +195,7 @@ const seed = async () => {
     {
       title:           'Smartphone-Einrichtung für Senioren',
       description:     'Mein Vater hat ein neues Android-Handy bekommen. Er braucht Hilfe bei WhatsApp, E-Mail und dem App-Store.',
-      categories:      ['Digital & Technik', 'Sozial & Kommunikation'],
+      categories:      ['Geistig', 'Sozial & Kommunikation'],
       difficulty:      1, durationMinutes: 90,
       location:        'Hamburg-Altona',
       status:          'open',
@@ -213,7 +213,7 @@ const seed = async () => {
     {
       title:           'Umzugshilfe – 3. Etage ohne Aufzug',
       description:     'Ich ziehe am Wochenende in eine neue Wohnung. Möbel müssen aus dem 3. Stock getragen werden. Suche 2–3 kräftige Helfer.',
-      categories:      ['Körperlich', 'Haushalt & Handwerk'],
+      categories:      ['Körperlich', 'Körperlich'],
       difficulty:      4, durationMinutes: 240,
       location:        'Berlin-Mitte',
       status:          'open',
@@ -222,7 +222,7 @@ const seed = async () => {
     {
       title:           'Python-Grundlagen erklären',
       description:     'Ich möchte mit Python anfangen. Brauche jemanden der mir Variablen, Schleifen und einfache Funktionen erklärt.',
-      categories:      ['Digital & Technik', 'Geistig'],
+      categories:      ['Geistig', 'Geistig'],
       difficulty:      2, durationMinutes: 120,
       location:        'Berlin-Mitte',
       status:          'open',
@@ -240,7 +240,7 @@ const seed = async () => {
     {
       title:           'Regal aufbauen (IKEA KALLAX)',
       description:     'Ich habe 3 KALLAX-Regale die aufgebaut werden müssen. Werkzeug ist vorhanden. Ich bin handwerklich nicht begabt.',
-      categories:      ['Haushalt & Handwerk'],
+      categories:      ['Körperlich'],
       difficulty:      2, durationMinutes: 120,
       location:        'München-Mitte',
       status:          'open',
@@ -258,7 +258,7 @@ const seed = async () => {
     {
       title:           'Garten aufräumen nach dem Winter',
       description:     'Mein kleiner Garten ist nach dem Winter ein Chaos. Laub rechen, Büsche schneiden, Beet vorbereiten – 2–3 Stunden Arbeit.',
-      categories:      ['Körperlich', 'Haushalt & Handwerk'],
+      categories:      ['Körperlich', 'Körperlich'],
       difficulty:      2, durationMinutes: 180,
       location:        'München-Schwabing',
       status:          'open',
@@ -269,7 +269,7 @@ const seed = async () => {
     {
       title:           'Drucker installieren – Windows 11',
       description:     'Mein neuer HP-Drucker wird von Windows nicht erkannt. Treiber-Installation schlägt immer fehl.',
-      categories:      ['Digital & Technik'],
+      categories:      ['Geistig'],
       difficulty:      2, durationMinutes: 45,
       location:        'Berlin-Mitte',
       status:          'assigned',
@@ -279,7 +279,7 @@ const seed = async () => {
     {
       title:           'Fahrrad reparieren – Gangschaltung',
       description:     'Meine Gangschaltung springt ständig. Ich brauche jemanden der sich mit Fahrrädern auskennt.',
-      categories:      ['Haushalt & Handwerk', 'Körperlich'],
+      categories:      ['Körperlich', 'Körperlich'],
       difficulty:      3, durationMinutes: 60,
       location:        'Berlin-Mitte',
       status:          'assigned',
@@ -329,7 +329,7 @@ const seed = async () => {
     {
       title:           'Website für kleines Café einrichten',
       description:     'Wir brauchen eine einfache Website mit Menü, Öffnungszeiten und Kontakt. Kein großes Budget – WordPress oder ähnliches reicht.',
-      categories:      ['Digital & Technik', 'Talent & Kreativität'],
+      categories:      ['Geistig', 'Talent & Kreativität'],
       difficulty:      4, durationMinutes: 300,
       location:        'Berlin-Friedrichshain',
       status:          'assigned',
@@ -362,7 +362,7 @@ const seed = async () => {
     {
       title:           'PC zusammenbauen',
       description:     'Ich habe alle Teile gekauft. Brauche jemanden der mir beim Zusammenbau des Gaming-PCs hilft.',
-      categories:      ['Digital & Technik'],
+      categories:      ['Geistig'],
       difficulty:      4, durationMinutes: 180,
       location:        'Berlin-Mitte',
       status:          'done',
@@ -373,7 +373,7 @@ const seed = async () => {
     {
       title:           'Badezimmer-Fliesen kitten',
       description:     'Zwischen Wanne und Wand ist die Verfugung rissig. Bitte kitten und abdichten.',
-      categories:      ['Haushalt & Handwerk'],
+      categories:      ['Körperlich'],
       difficulty:      2, durationMinutes: 90,
       location:        'Berlin-Mitte',
       status:          'done',
@@ -417,7 +417,7 @@ const seed = async () => {
     {
       title:           'Fenster putzen – 4-Zimmer-Wohnung',
       description:     'Ich bin hochschwanger und kann nicht putzen. Bitte alle Fenster innen und außen reinigen.',
-      categories:      ['Haushalt & Handwerk', 'Körperlich'],
+      categories:      ['Körperlich', 'Körperlich'],
       difficulty:      2, durationMinutes: 150,
       location:        'Hamburg-Eppendorf',
       status:          'done',
@@ -428,7 +428,7 @@ const seed = async () => {
     {
       title:           'Laptop-Virus entfernen',
       description:     'Mein Laptop ist nach einem Download sehr langsam. Ich glaube ich habe mir etwas eingefangen.',
-      categories:      ['Digital & Technik'],
+      categories:      ['Geistig'],
       difficulty:      3, durationMinutes: 90,
       location:        'Köln-Altstadt-Nord',
       status:          'done',

@@ -57,6 +57,13 @@
   align-items: center;
 }
 
+.podiumLink {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+  width: 100%;
+}
+
 .podiumCard {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
@@ -65,9 +72,10 @@
   text-align: center;
   width: 100%;
   margin-bottom: 0;
+  transition: border-color 0.15s;
 }
 
-.podiumCard:hover {
+.podiumLink:hover .podiumCard {
   border-color: var(--color-accent);
 }
 
@@ -122,6 +130,12 @@
   gap: 0.5rem;
 }
 
+.listRowLink {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
 .listRow {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
@@ -130,6 +144,12 @@
   display: flex;
   align-items: center;
   gap: 1rem;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.listRowLink:hover .listRow {
+  border-color: var(--color-accent);
+  background: rgba(74, 158, 255, 0.05);
 }
 
 .listRank {

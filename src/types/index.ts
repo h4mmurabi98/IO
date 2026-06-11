@@ -7,6 +7,7 @@ export interface User {
   points:   number
   level:    number
   badges:   string[]
+  friends:  string[]
 }
 
 export interface UserProfile extends User {
@@ -51,16 +52,12 @@ export interface PublicUser {
 export type TaskCategory =
   | 'Geistig'
   | 'Körperlich'
-  | 'Haushalt & Handwerk'
-  | 'Digital & Technik'
   | 'Talent & Kreativität'
   | 'Sozial & Kommunikation'
 
 export const TASK_CATEGORIES: TaskCategory[] = [
   'Geistig',
   'Körperlich',
-  'Haushalt & Handwerk',
-  'Digital & Technik',
   'Talent & Kreativität',
   'Sozial & Kommunikation',
 ]
