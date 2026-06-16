@@ -48,7 +48,7 @@ function RegisterPage() {
 
         <form className={styles.form} onSubmit={handleSubmit}>
           <div className={styles.field}>
-            <label htmlFor="fullName">Echter Name</label>
+            <label htmlFor="fullName">Echter Name <span className={styles.required}>*</span></label>
             <input
               id="fullName"
               type="text"

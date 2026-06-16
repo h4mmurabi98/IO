@@ -1,9 +1,12 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
+import { useTheme } from '../hooks/useTheme'
 import { api } from '../lib/api'
 import type { Task } from '../types'
 import styles from './HomePage.module.css'
+import logoDark  from '../assets/logo.svg'
+import logoLight from '../assets/logo-light.svg'
 
 function Dashboard() {
   const { user } = useAuth()
@@ -91,10 +94,13 @@ function Dashboard() {
 }
 
 function LandingPage() {
+  const { theme } = useTheme()
+  const logoSrc   = theme === 'dark' ? logoLight : logoDark
+
   return (
     <div className={styles.page}>
       <div className={styles.content}>
-        <h1 className={styles.logo}>IO</h1>
+        <img src={logoSrc} alt="IO" className={styles.logoImg} />
         <p className={styles.tagline}>Gemeinsam helfen – Punkte sammeln – Stufen aufsteigen</p>
         <p className={styles.desc}>
           Stell Hilfegesuche ein, finde Unterstützung in deiner Umgebung und werde für deine Hilfe belohnt.

@@ -12,12 +12,11 @@
   max-width: 520px;
 }
 
-.logo {
-  font-family: var(--font-heading);
-  font-size: 4rem;
-  font-weight: 700;
-  color: var(--color-accent);
-  margin-bottom: 0.5rem;
+.logoImg {
+  width: 280px;
+  height: auto;
+  margin: 0 auto 1rem;
+  display: block;
 }
 
 .tagline {

@@ -64,7 +64,10 @@
   margin-bottom: 0.3rem;
 }
 
-.editSection {
+.editGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
   margin-bottom: 1.5rem;
 }
 
@@ -285,5 +288,10 @@
 
 .successMsg {
   color: var(--color-success);
+  font-size: 0.85rem;
+}
+
+.errorMsg {
+  color: var(--color-error, #f85149);
   font-size: 0.85rem;
 }

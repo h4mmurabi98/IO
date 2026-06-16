@@ -131,10 +131,10 @@ router.get('/me', auth, async (req: AuthRequest, res: Response) => {
   }
 })
 
-// PUT /api/auth/profile – Profil aktualisieren (fullName, avatar)
+// PUT /api/auth/profile – Profil aktualisieren (fullName, avatar, location, email, passwort)
 router.put('/profile', auth, async (req: AuthRequest, res: Response) => {
   try {
-    const { fullName, avatar } = req.body
+    const { fullName, avatar, location, email, currentPassword, newPassword } = req.body
 
     const user = await User.findById(req.userId)
     if (!user) {
@@ -143,7 +143,7 @@ router.put('/profile', auth, async (req: AuthRequest, res: Response) => {
     }
 
     if (typeof fullName === 'string') user.fullName = fullName.trim()
-    // Avatar als base64 Data-URL – max. ~400KB (um MongoDB-Limits zu vermeiden)
+
     if (typeof avatar === 'string') {
       if (avatar.length > 550_000) {
         res.status(400).json({ message: 'Bild zu groß (max. 400 KB)' })
@@ -152,8 +152,43 @@ router.put('/profile', auth, async (req: AuthRequest, res: Response) => {
       user.avatar = avatar
     }
 
+    if (location && typeof location === 'object') {
+      user.location = {
+        country:      'Deutschland',
+        state:        typeof location.state        === 'string' ? location.state.trim()        : user.location?.state,
+        district:     typeof location.district     === 'string' ? location.district.trim()     : user.location?.district,
+        neighborhood: typeof location.neighborhood === 'string' ? location.neighborhood.trim() : user.location?.neighborhood,
+      }
+    }
+
+    if (typeof email === 'string' && email.trim() && email.trim() !== user.email) {
+      const taken = await User.findOne({ email: email.trim() })
+      if (taken) {
+        res.status(400).json({ message: 'E-Mail bereits vergeben' })
+        return
+      }
+      user.email = email.trim()
+    }
+
+    if (typeof newPassword === 'string' && newPassword) {
+      if (!currentPassword) {
+        res.status(400).json({ message: 'Aktuelles Passwort erforderlich' })
+        return
+      }
+      if (newPassword.length < 6) {
+        res.status(400).json({ message: 'Neues Passwort muss mindestens 6 Zeichen haben' })
+        return
+      }
+      const userWithPw = await User.findById(req.userId).select('+password')
+      if (!userWithPw || !(await userWithPw.comparePassword(currentPassword))) {
+        res.status(400).json({ message: 'Aktuelles Passwort falsch' })
+        return
+      }
+      user.password = newPassword
+    }
+
     await user.save()
-    res.json({ message: 'Profil aktualisiert', fullName: user.fullName, avatar: user.avatar })
+    res.json({ message: 'Profil aktualisiert' })
   } catch {
     res.status(500).json({ message: 'Serverfehler' })
   }

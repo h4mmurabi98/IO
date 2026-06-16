@@ -2,6 +2,8 @@ import { NavLink, useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import { useTheme } from '../hooks/useTheme'
 import styles from './Navbar.module.css'
+import logoDark  from '../assets/logo.svg'
+import logoLight from '../assets/logo-light.svg'
 
 function Navbar() {
   const { user, logout } = useAuth()
@@ -16,10 +18,14 @@ function Navbar() {
   const linkClass = ({ isActive }: { isActive: boolean }) =>
     isActive ? `${styles.link} ${styles.linkActive}` : styles.link
 
+  const logoSrc = theme === 'dark' ? logoLight : logoDark
+
   return (
     <nav className={styles.nav}>
       <div className={styles.inner}>
-        <NavLink to="/" className={styles.logo}>IO</NavLink>
+        <NavLink to="/" className={styles.logo}>
+          <img src={logoSrc} alt="IO" className={styles.logoImg} />
+        </NavLink>
 
         <div className={styles.links}>
           {user ? (

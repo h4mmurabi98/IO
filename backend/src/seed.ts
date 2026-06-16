@@ -3,6 +3,7 @@ import mongoose from 'mongoose'
 import connectDB from './config/db'
 import User from './models/User'
 import Task from './models/Task'
+import SupporterOffer from './models/SupporterOffer'
 
 dotenv.config()
 
@@ -11,12 +12,11 @@ const calculateLevel = (points: number) => Math.min(100, Math.floor(points / 100
 const seed = async () => {
   await connectDB()
 
-  // Alles löschen und neu aufbauen
+  await SupporterOffer.deleteMany({})
   await Task.deleteMany({})
   await User.deleteMany({})
   console.log('Datenbank geleert')
 
-  // Passwörter als Klartext – pre-save Hook hasht sie automatisch
   const pwDefault  = 'password123'
   const pwAbdullah = '19982000'
 
@@ -26,13 +26,14 @@ const seed = async () => {
     username:       'H4mmurabi98',
     email:          'frostaliraqi98@gmail.com',
     password:       pwAbdullah,
+    fullName:       'Abdullah Mubasher',
     points:         abdullahPoints,
     level:          calculateLevel(abdullahPoints),
     badges:         ['Erster Schritt', 'Helfer', 'Vertrauenswürdig'],
     location: {
       country:      'Deutschland',
       state:        'Berlin',
-      district:     'Mitte',
+      district:     'Charlottenburg',
       neighborhood: 'Hackescher Markt',
     },
     supporterEntry: {
@@ -44,31 +45,31 @@ const seed = async () => {
 
   // ── 25 Supporters ─────────────────────────────────────────────────────────
   const supporterData = [
-    { username: 'TechWizard42',   points: 8900, location: { country: 'Deutschland', state: 'Berlin',  district: 'Mitte',          neighborhood: 'Hackescher Markt' }, bio: 'PC-Reparatur, WLAN-Setup, Smartphone-Hilfe – ich bin für alles zuständig.' },
-    { username: 'LernCoach_Lisa', points: 7200, location: { country: 'Deutschland', state: 'Berlin',  district: 'Friedrichshain', neighborhood: 'Boxhagener Platz' }, bio: 'Nachhilfe in Mathe, Deutsch und Englisch bis Klasse 12.' },
-    { username: 'HandwerkerHans', points: 6500, location: { country: 'Deutschland', state: 'Bayern',  district: 'München-Mitte',  neighborhood: 'Maxvorstadt'      }, bio: 'Reparaturen, Möbelaufbau, Malerarbeiten – alles aus einer Hand.' },
-    { username: 'MusicMentor',    points: 5800, location: { country: 'Deutschland', state: 'Berlin',  district: 'Prenzlauer Berg',neighborhood: 'Kollwitzkiez'     }, bio: 'Gitarre, Klavier und Musiktheorie für Anfänger und Fortgeschrittene.' },
-    { username: 'FitnessFred',    points: 5100, location: { country: 'Deutschland', state: 'NRW',     district: 'Köln-Innenstadt',neighborhood: 'Altstadt-Nord'    }, bio: 'Sport und Bewegung, Trainingsplan erstellen, gemeinsam joggen.' },
-    { username: 'GardenGuru',     points: 4600, location: { country: 'Deutschland', state: 'Bayern',  district: 'München-Nord',   neighborhood: 'Schwabing'        }, bio: 'Gartenpflege, Bepflanzung, Umzugshilfe mit eigenem Transporter.' },
-    { username: 'CodeCoach_Kim',  points: 4200, location: { country: 'Deutschland', state: 'Berlin',  district: 'Mitte',          neighborhood: 'Hackescher Markt' }, bio: 'Programmieren lernen? Ich erkläre Python, JavaScript und Web-Basics.' },
-    { username: 'Umzugsprofi99',  points: 3900, location: { country: 'Deutschland', state: 'Berlin',  district: 'Mitte',          neighborhood: 'Alexanderplatz'  }, bio: 'Umzüge, schwere Möbel, Transport – ich bringe Kraft mit.' },
-    { username: 'SprachTandem',   points: 3400, location: { country: 'Deutschland', state: 'Hamburg', district: 'Hamburg-Mitte',  neighborhood: 'HafenCity'        }, bio: 'Arabisch, Türkisch und Englisch – ich helfe beim Sprachlernen.' },
-    { username: 'BewerbungsHilfe',points: 3100, location: { country: 'Deutschland', state: 'Berlin',  district: 'Friedrichshain', neighborhood: 'Samariterplatz'   }, bio: 'CV, Anschreiben und Vorstellungsgespräch – ich begleite dich.' },
-    { username: 'TechSupport_Tom',points: 2800, location: { country: 'Deutschland', state: 'NRW',     district: 'Düsseldorf',     neighborhood: 'Stadtmitte'       }, bio: 'Windows, macOS, Drucker, Router – kein Problem zu klein.' },
-    { username: 'NachbarHilft',   points: 2400, location: { country: 'Deutschland', state: 'Berlin',  district: 'Mitte',          neighborhood: 'Hackescher Markt' }, bio: 'Einkaufen, Arztbegleitung, Gesellschaft leisten – ich bin da.' },
-    { username: 'KreativKlara',   points: 2100, location: { country: 'Deutschland', state: 'Bayern',  district: 'München-Mitte',  neighborhood: 'Glockenbachviertel'},bio: 'Fotografie, Grafikdesign, kreative Projekte – alles machbar.' },
-    { username: 'TierfreundTina', points: 1800, location: { country: 'Deutschland', state: 'Berlin',  district: 'Prenzlauer Berg',neighborhood: 'Helmholtzplatz'  }, bio: 'Tierbetreuung, Gassi gehen, Katzensitting – liebevoll und zuverlässig.' },
-    { username: 'SeniorenHilfe',  points: 1500, location: { country: 'Deutschland', state: 'Hamburg', district: 'Altona',         neighborhood: 'Ottensen'         }, bio: 'Ich helfe Senioren bei Behördengängen, Technik und Alltag.' },
-    { username: 'ReparaturRudi',  points: 1200, location: { country: 'Deutschland', state: 'Bayern',  district: 'München-Süd',    neighborhood: 'Sendling'         }, bio: 'Fahrrad reparieren, kleine Elektrik, Möbel reparieren.' },
-    { username: 'SportBuddy_Ben', points:  950, location: { country: 'Deutschland', state: 'Berlin',  district: 'Mitte',          neighborhood: 'Tiergarten'       }, bio: 'Gemeinsam Sport machen – Laufen, Radfahren, Schwimmen.' },
-    { username: 'LesePateMia',    points:  750, location: { country: 'Deutschland', state: 'NRW',     district: 'Köln-Ehrenfeld', neighborhood: 'Ehrenfeld'        }, bio: 'Vorlesen, Lernhilfe für Kinder, Begleitung bei Schulaufgaben.' },
-    { username: 'KüchenkönigKai', points:  600, location: { country: 'Deutschland', state: 'Berlin',  district: 'Friedrichshain', neighborhood: 'Boxhagener Platz' }, bio: 'Kochen lernen, Rezepte, gemeinsam kochen – ich teile mein Wissen.' },
-    { username: 'ReiseHelferin',  points:  450, location: { country: 'Deutschland', state: 'Hamburg', district: 'Hamburg-Nord',   neighborhood: 'Eppendorf'        }, bio: 'Reisepläne, Visumsanträge, Behördenpost übersetzen.' },
-    { username: 'EhrenAmtMona',   points:  300, location: { country: 'Deutschland', state: 'Berlin',  district: 'Mitte',          neighborhood: 'Alexanderplatz'  }, bio: 'Ehrenamtlich aktiv – ich helfe wo immer ich kann.' },
-    { username: 'JugendCoach_Jo', points:  200, location: { country: 'Deutschland', state: 'Bayern',  district: 'München-Nord',   neighborhood: 'Schwabing'        }, bio: 'Jugendliche begleiten, Bewerbung, Orientierung.' },
-    { username: 'GartenNachbar',  points:  150, location: { country: 'Deutschland', state: 'NRW',     district: 'Köln-Innenstadt',neighborhood: 'Altstadt-Süd'    }, bio: 'Kleingarten, Rasenmähen, Unkraut jäten – mach ich gerne.' },
-    { username: 'HelferHerz',     points:  100, location: { country: 'Deutschland', state: 'Berlin',  district: 'Friedrichshain', neighborhood: 'Samariterplatz'   }, bio: 'Neu dabei, aber motiviert – ich helfe gerne bei allem.' },
-    { username: 'AnfängerAlex',   points:   50, location: { country: 'Deutschland', state: 'Berlin',  district: 'Mitte',          neighborhood: 'Hackescher Markt' }, bio: 'Ich starte gerade und freue mich auf erste Aufgaben.' },
+    { username: 'TechWizard42',    points: 8900, location: { country: 'Deutschland', state: 'Berlin',  district: 'Mitte',           neighborhood: 'Hackescher Markt'  }, bio: 'PC-Reparatur, WLAN-Setup, Smartphone-Hilfe – ich bin für alles zuständig.' },
+    { username: 'LernCoach_Lisa',  points: 7200, location: { country: 'Deutschland', state: 'Berlin',  district: 'Friedrichshain',  neighborhood: 'Boxhagener Platz'  }, bio: 'Nachhilfe in Mathe, Deutsch und Englisch bis Klasse 12.' },
+    { username: 'HandwerkerHans',  points: 6500, location: { country: 'Deutschland', state: 'Bayern',  district: 'München-Mitte',   neighborhood: 'Maxvorstadt'       }, bio: 'Reparaturen, Möbelaufbau, Malerarbeiten – alles aus einer Hand.' },
+    { username: 'MusicMentor',     points: 5800, location: { country: 'Deutschland', state: 'Berlin',  district: 'Prenzlauer Berg', neighborhood: 'Kollwitzkiez'      }, bio: 'Gitarre, Klavier und Musiktheorie für Anfänger und Fortgeschrittene.' },
+    { username: 'FitnessFred',     points: 5100, location: { country: 'Deutschland', state: 'NRW',     district: 'Köln-Innenstadt', neighborhood: 'Altstadt-Nord'     }, bio: 'Sport und Bewegung, Trainingsplan erstellen, gemeinsam joggen.' },
+    { username: 'GardenGuru',      points: 4600, location: { country: 'Deutschland', state: 'Bayern',  district: 'München-Nord',    neighborhood: 'Schwabing'         }, bio: 'Gartenpflege, Bepflanzung, Umzugshilfe mit eigenem Transporter.' },
+    { username: 'CodeCoach_Kim',   points: 4200, location: { country: 'Deutschland', state: 'Berlin',  district: 'Mitte',           neighborhood: 'Hackescher Markt'  }, bio: 'Programmieren lernen? Ich erkläre Python, JavaScript und Web-Basics.' },
+    { username: 'Umzugsprofi99',   points: 3900, location: { country: 'Deutschland', state: 'Berlin',  district: 'Mitte',           neighborhood: 'Alexanderplatz'   }, bio: 'Umzüge, schwere Möbel, Transport – ich bringe Kraft mit.' },
+    { username: 'SprachTandem',    points: 3400, location: { country: 'Deutschland', state: 'Hamburg', district: 'Hamburg-Mitte',   neighborhood: 'HafenCity'         }, bio: 'Arabisch, Türkisch und Englisch – ich helfe beim Sprachlernen.' },
+    { username: 'BewerbungsHilfe', points: 3100, location: { country: 'Deutschland', state: 'Berlin',  district: 'Friedrichshain',  neighborhood: 'Samariterplatz'    }, bio: 'CV, Anschreiben und Vorstellungsgespräch – ich begleite dich.' },
+    { username: 'TechSupport_Tom', points: 2800, location: { country: 'Deutschland', state: 'NRW',     district: 'Düsseldorf',      neighborhood: 'Stadtmitte'        }, bio: 'Windows, macOS, Drucker, Router – kein Problem zu klein.' },
+    { username: 'NachbarHilft',    points: 2400, location: { country: 'Deutschland', state: 'Berlin',  district: 'Mitte',           neighborhood: 'Hackescher Markt'  }, bio: 'Einkaufen, Arztbegleitung, Gesellschaft leisten – ich bin da.' },
+    { username: 'KreativKlara',    points: 2100, location: { country: 'Deutschland', state: 'Bayern',  district: 'München-Mitte',   neighborhood: 'Glockenbachviertel'}, bio: 'Fotografie, Grafikdesign, kreative Projekte – alles machbar.' },
+    { username: 'TierfreundTina',  points: 1800, location: { country: 'Deutschland', state: 'Berlin',  district: 'Prenzlauer Berg', neighborhood: 'Helmholtzplatz'    }, bio: 'Tierbetreuung, Gassi gehen, Katzensitting – liebevoll und zuverlässig.' },
+    { username: 'SeniorenHilfe',   points: 1500, location: { country: 'Deutschland', state: 'Hamburg', district: 'Altona',          neighborhood: 'Ottensen'          }, bio: 'Ich helfe Senioren bei Behördengängen, Technik und Alltag.' },
+    { username: 'ReparaturRudi',   points: 1200, location: { country: 'Deutschland', state: 'Bayern',  district: 'München-Süd',     neighborhood: 'Sendling'          }, bio: 'Fahrrad reparieren, kleine Elektrik, Möbel reparieren.' },
+    { username: 'SportBuddy_Ben',  points:  950, location: { country: 'Deutschland', state: 'Berlin',  district: 'Mitte',           neighborhood: 'Tiergarten'        }, bio: 'Gemeinsam Sport machen – Laufen, Radfahren, Schwimmen.' },
+    { username: 'LesePateMia',     points:  750, location: { country: 'Deutschland', state: 'NRW',     district: 'Köln-Ehrenfeld',  neighborhood: 'Ehrenfeld'         }, bio: 'Vorlesen, Lernhilfe für Kinder, Begleitung bei Schulaufgaben.' },
+    { username: 'KüchenkönigKai',  points:  600, location: { country: 'Deutschland', state: 'Berlin',  district: 'Friedrichshain',  neighborhood: 'Boxhagener Platz'  }, bio: 'Kochen lernen, Rezepte, gemeinsam kochen – ich teile mein Wissen.' },
+    { username: 'ReiseHelferin',   points:  450, location: { country: 'Deutschland', state: 'Hamburg', district: 'Hamburg-Nord',    neighborhood: 'Eppendorf'         }, bio: 'Reisepläne, Visumsanträge, Behördenpost übersetzen.' },
+    { username: 'EhrenAmtMona',    points:  300, location: { country: 'Deutschland', state: 'Berlin',  district: 'Mitte',           neighborhood: 'Alexanderplatz'   }, bio: 'Ehrenamtlich aktiv – ich helfe wo immer ich kann.' },
+    { username: 'JugendCoach_Jo',  points:  200, location: { country: 'Deutschland', state: 'Bayern',  district: 'München-Nord',    neighborhood: 'Schwabing'         }, bio: 'Jugendliche begleiten, Bewerbung, Orientierung.' },
+    { username: 'GartenNachbar',   points:  150, location: { country: 'Deutschland', state: 'NRW',     district: 'Köln-Innenstadt', neighborhood: 'Altstadt-Süd'      }, bio: 'Kleingarten, Rasenmähen, Unkraut jäten – mach ich gerne.' },
+    { username: 'HelferHerz',      points:  100, location: { country: 'Deutschland', state: 'Berlin',  district: 'Friedrichshain',  neighborhood: 'Samariterplatz'    }, bio: 'Neu dabei, aber motiviert – ich helfe gerne bei allem.' },
+    { username: 'AnfängerAlex',    points:   50, location: { country: 'Deutschland', state: 'Berlin',  district: 'Mitte',           neighborhood: 'Hackescher Markt'  }, bio: 'Ich starte gerade und freue mich auf erste Aufgaben.' },
   ]
 
   const supporters = await Promise.all(
@@ -89,31 +90,31 @@ const seed = async () => {
 
   // ── 25 Seekers ────────────────────────────────────────────────────────────
   const seekerData = [
-    { username: 'HilfeSucher_Anna',  points: 420, location: { country: 'Deutschland', state: 'Berlin',  district: 'Mitte',          neighborhood: 'Hackescher Markt' } },
-    { username: 'MaxMustermann',      points: 180, location: { country: 'Deutschland', state: 'Bayern',  district: 'München-Mitte',  neighborhood: 'Maxvorstadt'      } },
-    { username: 'ElternteilEva',      points: 300, location: { country: 'Deutschland', state: 'Berlin',  district: 'Prenzlauer Berg',neighborhood: 'Kollwitzkiez'     } },
-    { username: 'RentnerRoland',      points:  90, location: { country: 'Deutschland', state: 'NRW',     district: 'Köln-Innenstadt',neighborhood: 'Altstadt-Nord'    } },
-    { username: 'StudentSven',        points: 510, location: { country: 'Deutschland', state: 'Berlin',  district: 'Friedrichshain', neighborhood: 'Boxhagener Platz' } },
-    { username: 'AzubiAmira',         points: 240, location: { country: 'Deutschland', state: 'Hamburg', district: 'Hamburg-Mitte',  neighborhood: 'HafenCity'        } },
-    { username: 'FreiberuflerFinn',   points: 660, location: { country: 'Deutschland', state: 'Berlin',  district: 'Mitte',          neighborhood: 'Alexanderplatz'  } },
-    { username: 'FlüchtlingFarida',   points: 120, location: { country: 'Deutschland', state: 'Bayern',  district: 'München-Nord',   neighborhood: 'Schwabing'        } },
-    { username: 'AlleinMuttiAlice',   points: 390, location: { country: 'Deutschland', state: 'Berlin',  district: 'Friedrichshain', neighborhood: 'Samariterplatz'   } },
-    { username: 'PflegebedürftigPaul',points:  60, location: { country: 'Deutschland', state: 'NRW',     district: 'Düsseldorf',     neighborhood: 'Stadtmitte'       } },
-    { username: 'WgBewohnerWilma',    points: 270, location: { country: 'Deutschland', state: 'Berlin',  district: 'Mitte',          neighborhood: 'Hackescher Markt' } },
-    { username: 'NeuInDeutschlandNoa',points: 150, location: { country: 'Deutschland', state: 'Hamburg', district: 'Altona',         neighborhood: 'Ottensen'         } },
-    { username: 'BeschäftigtBernd',   points: 480, location: { country: 'Deutschland', state: 'Bayern',  district: 'München-Süd',    neighborhood: 'Sendling'         } },
-    { username: 'JungeSeniorinYvette',points: 210, location: { country: 'Deutschland', state: 'Berlin',  district: 'Prenzlauer Berg',neighborhood: 'Helmholtzplatz'  } },
-    { username: 'HandwerkerKunde_Kai',points: 330, location: { country: 'Deutschland', state: 'NRW',     district: 'Köln-Ehrenfeld', neighborhood: 'Ehrenfeld'        } },
-    { username: 'SchreibblockadeScott',points: 720, location: { country: 'Deutschland', state: 'Berlin', district: 'Mitte',          neighborhood: 'Tiergarten'       } },
-    { username: 'TierbesitzerinTamara',points: 540, location: { country: 'Deutschland', state: 'Berlin', district: 'Friedrichshain', neighborhood: 'Boxhagener Platz' } },
-    { username: 'GerneGeholfen_Greta', points: 360, location: { country: 'Deutschland', state: 'Bayern', district: 'München-Mitte',  neighborhood: 'Glockenbachviertel'} },
-    { username: 'DigitalDistanzDavid', points: 200, location: { country: 'Deutschland', state: 'NRW',    district: 'Köln-Innenstadt',neighborhood: 'Altstadt-Süd'    } },
-    { username: 'UmzugStress_Ulla',    points: 440, location: { country: 'Deutschland', state: 'Hamburg',district: 'Hamburg-Nord',   neighborhood: 'Eppendorf'        } },
-    { username: 'LernLücke_Leon',      points: 280, location: { country: 'Deutschland', state: 'Berlin', district: 'Mitte',          neighborhood: 'Hackescher Markt' } },
-    { username: 'GartenAnfänger_Gabi', points: 160, location: { country: 'Deutschland', state: 'Bayern', district: 'München-Nord',   neighborhood: 'Schwabing'        } },
-    { username: 'BerufsWechsel_Boris', points: 600, location: { country: 'Deutschland', state: 'Berlin', district: 'Friedrichshain', neighborhood: 'Samariterplatz'   } },
-    { username: 'KreativBlockade_Kira',points: 320, location: { country: 'Deutschland', state: 'NRW',    district: 'Düsseldorf',     neighborhood: 'Stadtmitte'       } },
-    { username: 'AlltagsHeld_Arthur',  points:  80, location: { country: 'Deutschland', state: 'Berlin', district: 'Prenzlauer Berg',neighborhood: 'Kollwitzkiez'     } },
+    { username: 'HilfeSucher_Anna',   points: 420, location: { country: 'Deutschland', state: 'Berlin',  district: 'Mitte',           neighborhood: 'Hackescher Markt'  } },
+    { username: 'MaxMustermann',       points: 180, location: { country: 'Deutschland', state: 'Bayern',  district: 'München-Mitte',   neighborhood: 'Maxvorstadt'       } },
+    { username: 'ElternteilEva',       points: 300, location: { country: 'Deutschland', state: 'Berlin',  district: 'Prenzlauer Berg', neighborhood: 'Kollwitzkiez'      } },
+    { username: 'RentnerRoland',       points:  90, location: { country: 'Deutschland', state: 'NRW',     district: 'Köln-Innenstadt', neighborhood: 'Altstadt-Nord'     } },
+    { username: 'StudentSven',         points: 510, location: { country: 'Deutschland', state: 'Berlin',  district: 'Friedrichshain',  neighborhood: 'Boxhagener Platz'  } },
+    { username: 'AzubiAmira',          points: 240, location: { country: 'Deutschland', state: 'Hamburg', district: 'Hamburg-Mitte',   neighborhood: 'HafenCity'         } },
+    { username: 'FreiberuflerFinn',    points: 660, location: { country: 'Deutschland', state: 'Berlin',  district: 'Mitte',           neighborhood: 'Alexanderplatz'   } },
+    { username: 'FlüchtlingFarida',    points: 120, location: { country: 'Deutschland', state: 'Bayern',  district: 'München-Nord',    neighborhood: 'Schwabing'         } },
+    { username: 'AlleinMuttiAlice',    points: 390, location: { country: 'Deutschland', state: 'Berlin',  district: 'Friedrichshain',  neighborhood: 'Samariterplatz'    } },
+    { username: 'PflegebedürftigPaul', points:  60, location: { country: 'Deutschland', state: 'NRW',     district: 'Düsseldorf',      neighborhood: 'Stadtmitte'        } },
+    { username: 'WgBewohnerWilma',     points: 270, location: { country: 'Deutschland', state: 'Berlin',  district: 'Mitte',           neighborhood: 'Hackescher Markt'  } },
+    { username: 'NeuInDeutschlandNoa', points: 150, location: { country: 'Deutschland', state: 'Hamburg', district: 'Altona',          neighborhood: 'Ottensen'          } },
+    { username: 'BeschäftigtBernd',    points: 480, location: { country: 'Deutschland', state: 'Bayern',  district: 'München-Süd',     neighborhood: 'Sendling'          } },
+    { username: 'JungeSeniorinYvette', points: 210, location: { country: 'Deutschland', state: 'Berlin',  district: 'Prenzlauer Berg', neighborhood: 'Helmholtzplatz'    } },
+    { username: 'HandwerkerKunde_Kai', points: 330, location: { country: 'Deutschland', state: 'NRW',     district: 'Köln-Ehrenfeld',  neighborhood: 'Ehrenfeld'         } },
+    { username: 'SchreibblockadeScott',points: 720, location: { country: 'Deutschland', state: 'Berlin',  district: 'Mitte',           neighborhood: 'Tiergarten'        } },
+    { username: 'TierbesitzerinTamara',points: 540, location: { country: 'Deutschland', state: 'Berlin',  district: 'Friedrichshain',  neighborhood: 'Boxhagener Platz'  } },
+    { username: 'GerneGeholfen_Greta', points: 360, location: { country: 'Deutschland', state: 'Bayern',  district: 'München-Mitte',   neighborhood: 'Glockenbachviertel'} },
+    { username: 'DigitalDistanzDavid', points: 200, location: { country: 'Deutschland', state: 'NRW',     district: 'Köln-Innenstadt', neighborhood: 'Altstadt-Süd'      } },
+    { username: 'UmzugStress_Ulla',    points: 440, location: { country: 'Deutschland', state: 'Hamburg', district: 'Hamburg-Nord',    neighborhood: 'Eppendorf'         } },
+    { username: 'LernLücke_Leon',      points: 280, location: { country: 'Deutschland', state: 'Berlin',  district: 'Mitte',           neighborhood: 'Hackescher Markt'  } },
+    { username: 'GartenAnfänger_Gabi', points: 160, location: { country: 'Deutschland', state: 'Bayern',  district: 'München-Nord',    neighborhood: 'Schwabing'         } },
+    { username: 'BerufsWechsel_Boris', points: 600, location: { country: 'Deutschland', state: 'Berlin',  district: 'Friedrichshain',  neighborhood: 'Samariterplatz'    } },
+    { username: 'KreativBlockade_Kira',points: 320, location: { country: 'Deutschland', state: 'NRW',     district: 'Düsseldorf',      neighborhood: 'Stadtmitte'        } },
+    { username: 'AlltagsHeld_Arthur',  points:  80, location: { country: 'Deutschland', state: 'Berlin',  district: 'Prenzlauer Berg', neighborhood: 'Kollwitzkiez'      } },
   ]
 
   const seekers = await Promise.all(
@@ -133,7 +134,6 @@ const seed = async () => {
   console.log(`${seekers.length} Seekers erstellt`)
 
   // ── Freunde für Abdullah ──────────────────────────────────────────────────
-  // Ein paar Supporter und Seeker als Freunde hinzufügen
   const friendIds = [
     supporters[0]._id, supporters[1]._id, supporters[6]._id,
     supporters[11]._id, supporters[3]._id,
@@ -143,7 +143,6 @@ const seed = async () => {
   console.log('Freundesliste für H4mmurabi98 gesetzt')
 
   // ── 30 Tasks ──────────────────────────────────────────────────────────────
-  // Hilfsfunktion: pointValue wird über pre-save berechnet
   type TaskStatus = 'open' | 'assigned' | 'done'
   interface TaskSeed {
     title: string; description: string
@@ -265,6 +264,188 @@ const seed = async () => {
       createdBy:       seekers[21]._id,
     },
 
+    // ── OPEN (weitere 20 Aufgaben) ─────────────────────────────────────────
+    {
+      title:           'Excel-Tabelle für Haushaltsbuch erstellen',
+      description:     'Ich möchte meine Ausgaben besser im Blick behalten. Jemand soll mir eine übersichtliche Excel-Vorlage mit Formeln bauen.',
+      categories:      ['Geistig', 'Geistig'],
+      difficulty:      2, durationMinutes: 60,
+      location:        'Berlin-Mitte',
+      status:          'open',
+      createdBy:       seekers[6]._id,
+    },
+    {
+      title:           'Türschloss wechseln – Wohnungstür klemmt',
+      description:     'Das Schloss meiner Wohnungstür ist defekt und lässt sich kaum noch öffnen. Brauche jemanden mit handwerklichem Geschick.',
+      categories:      ['Körperlich'],
+      difficulty:      3, durationMinutes: 90,
+      location:        'Köln-Ehrenfeld',
+      status:          'open',
+      createdBy:       seekers[14]._id,
+    },
+    {
+      title:           'Arabische Schrift lernen – Grundlagen',
+      description:     'Ich möchte arabische Schriftzeichen lernen um Briefe meiner Großeltern lesen zu können. Suche geduldsame Lernbegleitung.',
+      categories:      ['Geistig', 'Sozial & Kommunikation'],
+      difficulty:      3, durationMinutes: 90,
+      location:        'Hamburg-HafenCity',
+      status:          'open',
+      createdBy:       seekers[5]._id,
+    },
+    {
+      title:           'Geburtstagsfeier dekorieren – 50 Gäste',
+      description:     'Ich plane eine Überraschungsparty für meinen Mann. Hilfe beim Aufbauen, Dekorieren und Vorbereiten des Buffets gesucht.',
+      categories:      ['Talent & Kreativität', 'Körperlich'],
+      difficulty:      2, durationMinutes: 180,
+      location:        'München-Schwabing',
+      status:          'open',
+      createdBy:       seekers[17]._id,
+    },
+    {
+      title:           'Rollstuhl-Transport zum Arzt',
+      description:     'Meine Mutter ist auf den Rollstuhl angewiesen. Wir suchen jemanden der uns zum Arzttermin fährt und wieder abholt.',
+      categories:      ['Körperlich', 'Sozial & Kommunikation'],
+      difficulty:      1, durationMinutes: 120,
+      location:        'Düsseldorf-Stadtmitte',
+      status:          'open',
+      createdBy:       seekers[9]._id,
+    },
+    {
+      title:           'Logo für kleines Unternehmen entwerfen',
+      description:     'Ich eröffne einen kleinen Online-Shop für Handmade-Schmuck und brauche ein einfaches, modernes Logo.',
+      categories:      ['Talent & Kreativität'],
+      difficulty:      3, durationMinutes: 180,
+      location:        'Berlin-Friedrichshain',
+      status:          'open',
+      createdBy:       seekers[23]._id,
+    },
+    {
+      title:           'Wasserhahn austauschen – Küche',
+      description:     'Der Wasserhahn in meiner Küche tropft seit Wochen. Ich habe bereits einen neuen Hahn gekauft – suche jemanden zum Einbauen.',
+      categories:      ['Körperlich'],
+      difficulty:      3, durationMinutes: 60,
+      location:        'Berlin-Mitte',
+      status:          'open',
+      createdBy:       seekers[10]._id,
+    },
+    {
+      title:           'Sprachkurs Türkisch – Konversation für Anfänger',
+      description:     'Ich habe türkische Kollegen und möchte ein paar Grundsätze und Höflichkeitsfloskeln lernen. 2 Stunden würden reichen.',
+      categories:      ['Geistig', 'Sozial & Kommunikation'],
+      difficulty:      2, durationMinutes: 120,
+      location:        'Köln-Altstadt-Nord',
+      status:          'open',
+      createdBy:       seekers[3]._id,
+    },
+    {
+      title:           'Wohnung streichen – 2 Zimmer',
+      description:     'Ich ziehe nächsten Monat ein und möchte vorher 2 Zimmer neu streichen. Farbe ist vorhanden. Hilfe beim Abkleben und Rollen gesucht.',
+      categories:      ['Körperlich', 'Körperlich'],
+      difficulty:      3, durationMinutes: 360,
+      location:        'Hamburg-Altona',
+      status:          'open',
+      createdBy:       seekers[19]._id,
+    },
+    {
+      title:           'Podcast aufnehmen – technische Einrichtung',
+      description:     'Ich möchte mit einem Freund einen Podcast starten. Brauche Hilfe bei der Technik: Mikrofon einrichten, Audacity konfigurieren, ersten Test aufnehmen.',
+      categories:      ['Geistig', 'Talent & Kreativität'],
+      difficulty:      3, durationMinutes: 120,
+      location:        'Berlin-Prenzlauer Berg',
+      status:          'open',
+      createdBy:       seekers[4]._id,
+    },
+    {
+      title:           'Bewerbungsmappe für Ausbildungsstelle',
+      description:     'Mein Sohn bewirbt sich um eine Ausbildung als Elektriker. Wir suchen Hilfe beim Verfassen des Anschreibens und Überprüfen der Unterlagen.',
+      categories:      ['Sozial & Kommunikation', 'Geistig'],
+      difficulty:      2, durationMinutes: 90,
+      location:        'München-Mitte',
+      status:          'open',
+      createdBy:       seekers[1]._id,
+    },
+    {
+      title:           'Aquarium einrichten – 120-Liter-Becken',
+      description:     'Ich habe ein gebrauchtes Aquarium gekauft und bin Anfänger. Jemand soll mir beim Einrichten, Bepflanzen und der ersten Wasserbefüllung helfen.',
+      categories:      ['Körperlich', 'Geistig'],
+      difficulty:      3, durationMinutes: 150,
+      location:        'Berlin-Mitte',
+      status:          'open',
+      createdBy:       seekers[20]._id,
+    },
+    {
+      title:           'Tanzen lernen – Salsa-Grundschritte',
+      description:     'Ich habe in 3 Wochen eine Hochzeit und möchte ein paar Salsa-Grundschritte lernen. Suche eine geduldige Tanzhilfe für 2–3 Übungsstunden.',
+      categories:      ['Talent & Kreativität', 'Körperlich'],
+      difficulty:      2, durationMinutes: 90,
+      location:        'Berlin-Tiergarten',
+      status:          'open',
+      createdBy:       seekers[15]._id,
+    },
+    {
+      title:           'Keller ausmisten und entsorgen',
+      description:     'Mein Keller ist voller alter Möbel und Kartons. Ich brauche kräftige Hilfe beim Rausschleppen – Sperrmüll ist bereits angemeldet.',
+      categories:      ['Körperlich', 'Körperlich'],
+      difficulty:      3, durationMinutes: 240,
+      location:        'Köln-Innenstadt',
+      status:          'open',
+      createdBy:       seekers[24]._id,
+    },
+    {
+      title:           'Nachhilfe Chemie – Oberstufe',
+      description:     'Organische Chemie macht mir Probleme. Ich brauche Hilfe bei Reaktionsmechanismen und Strukturformeln für die nächste Klausur.',
+      categories:      ['Geistig'],
+      difficulty:      4, durationMinutes: 90,
+      location:        'Hamburg-Eppendorf',
+      status:          'open',
+      createdBy:       seekers[11]._id,
+    },
+    {
+      title:           'Hundetraining – Grundkommandos',
+      description:     'Mein Labrador-Welpe (6 Monate) kennt keine Kommandos und springt alles an. Ich suche jemanden mit Hundeerfahrung für erste Trainingseinheiten.',
+      categories:      ['Sozial & Kommunikation', 'Körperlich'],
+      difficulty:      3, durationMinutes: 90,
+      location:        'Berlin-Prenzlauer Berg',
+      status:          'open',
+      createdBy:       seekers[16]._id,
+    },
+    {
+      title:           'Handyhülle selbst gestalten – Workshop',
+      description:     'Ich möchte meiner Schwester eine selbst gestaltete Handyhülle schenken. Jemand soll mir zeigen wie das geht – Material bringe ich mit.',
+      categories:      ['Talent & Kreativität'],
+      difficulty:      1, durationMinutes: 60,
+      location:        'München-Glockenbachviertel',
+      status:          'open',
+      createdBy:       seekers[17]._id,
+    },
+    {
+      title:           'WLAN-Verstärker einrichten – totes Leck in der Wohnung',
+      description:     'In meinem Schlafzimmer kommt kein Signal an. Ich habe bereits einen Repeater gekauft, weiß aber nicht wie ich ihn richtig konfiguriere.',
+      categories:      ['Geistig'],
+      difficulty:      2, durationMinutes: 30,
+      location:        'Berlin-Mitte',
+      status:          'open',
+      createdBy:       seekers[21]._id,
+    },
+    {
+      title:           'Fensterrahmen streichen – Außenseite',
+      description:     'Die Farbe an meinen Fensterrahmen blättert ab. Ich brauche Hilfe beim Abschleifen, Grundieren und Streichen – Leiter ist vorhanden.',
+      categories:      ['Körperlich'],
+      difficulty:      3, durationMinutes: 240,
+      location:        'Hamburg-Ottensen',
+      status:          'open',
+      createdBy:       seekers[18]._id,
+    },
+    {
+      title:           'Gesellschaft leisten – Seniorin sucht Gesprächspartner',
+      description:     'Ich bin 80, lebe allein und freue mich über Besuch. Kaffeetrinken, Karten spielen, erzählen – einfach eine nette Stunde zusammen.',
+      categories:      ['Sozial & Kommunikation'],
+      difficulty:      1, durationMinutes: 60,
+      location:        'Köln-Altstadt-Süd',
+      status:          'open',
+      createdBy:       seekers[9]._id,
+    },
+
     // ── ASSIGNED (8 Aufgaben) ───────────────────────────────────────────────
     {
       title:           'Drucker installieren – Windows 11',
@@ -317,7 +498,7 @@ const seed = async () => {
       assignedTo:      supporters[13]._id,
     },
     {
-      title:           'Steuererklärung vorbereiten – erste Mal',
+      title:           'Steuererklärung vorbereiten – erstes Mal',
       description:     'Ich mache dieses Jahr zum ersten Mal meine Steuererklärung. Brauche jemanden der mich durch den Prozess führt.',
       categories:      ['Geistig', 'Sozial & Kommunikation'],
       difficulty:      3, durationMinutes: 120,
@@ -347,6 +528,58 @@ const seed = async () => {
       assignedTo:      supporters[8]._id,
     },
 
+    // ── ASSIGNED (weitere 5 Aufgaben) ──────────────────────────────────────
+    {
+      title:           'Nähmaschine reparieren – Fadenproblem',
+      description:     'Meine alte Singer-Nähmaschine macht Schlaufen auf der Unterseite. Ich brauche jemanden der sich mit Nähmaschinen auskennt.',
+      categories:      ['Körperlich', 'Talent & Kreativität'],
+      difficulty:      3, durationMinutes: 60,
+      location:        'Berlin-Mitte',
+      status:          'assigned',
+      createdBy:       seekers[23]._id,
+      assignedTo:      supporters[2]._id,
+    },
+    {
+      title:           'Instagram-Profil für Kleinunternehmen optimieren',
+      description:     'Meine Bäckerei hat 200 Follower – ich weiß nicht was ich falsch mache. Jemand soll sich das Profil ansehen und mir konkrete Tipps geben.',
+      categories:      ['Geistig', 'Sozial & Kommunikation'],
+      difficulty:      2, durationMinutes: 90,
+      location:        'München-Maxvorstadt',
+      status:          'assigned',
+      createdBy:       seekers[1]._id,
+      assignedTo:      supporters[6]._id,
+    },
+    {
+      title:           'Rollrasen verlegen – Vorgarten 40 m²',
+      description:     'Ich habe Rollrasen bestellt. Jemand soll mir beim Vorbereiten des Bodens und Verlegen helfen. Schubkarre und Harke sind vorhanden.',
+      categories:      ['Körperlich', 'Körperlich'],
+      difficulty:      3, durationMinutes: 180,
+      location:        'Köln-Ehrenfeld',
+      status:          'assigned',
+      createdBy:       seekers[14]._id,
+      assignedTo:      supporters[5]._id,
+    },
+    {
+      title:           'Geige stimmen und Anfängerstunde',
+      description:     'Ich habe eine alte Geige gefunden und möchte damit anfangen. Brauche jemanden der sie stimmt und mir die ersten Töne beibringt.',
+      categories:      ['Talent & Kreativität'],
+      difficulty:      2, durationMinutes: 60,
+      location:        'Berlin-Friedrichshain',
+      status:          'assigned',
+      createdBy:       seekers[22]._id,
+      assignedTo:      supporters[3]._id,
+    },
+    {
+      title:           'Antrag auf Elterngeld ausfüllen',
+      description:     'Ich bin überfordert mit dem Elterngeld-Antrag. Jemand der das schon gemacht hat soll mir Schritt für Schritt dabei helfen.',
+      categories:      ['Sozial & Kommunikation', 'Geistig'],
+      difficulty:      3, durationMinutes: 90,
+      location:        'Hamburg-Altona',
+      status:          'assigned',
+      createdBy:       seekers[18]._id,
+      assignedTo:      supporters[9]._id,
+    },
+
     // ── DONE (10 Aufgaben) ──────────────────────────────────────────────────
     {
       title:           'Nachhilfe Physik – Abitur-Vorbereitung',
@@ -362,7 +595,7 @@ const seed = async () => {
     {
       title:           'PC zusammenbauen',
       description:     'Ich habe alle Teile gekauft. Brauche jemanden der mir beim Zusammenbau des Gaming-PCs hilft.',
-      categories:      ['Geistig'],
+      categories:      ['Geistig', 'Körperlich'],
       difficulty:      4, durationMinutes: 180,
       location:        'Berlin-Mitte',
       status:          'done',
@@ -460,15 +693,117 @@ const seed = async () => {
     },
   ]
 
-  // Tasks speichern (pre-save berechnet pointValue)
   for (const t of tasks) {
     const task = new Task(t)
     await task.save()
   }
-  console.log(`${tasks.length} Tasks erstellt`)
+  console.log(`${tasks.length} Tasks erstellt (${tasks.filter(t => t.status === 'open').length} offen, ${tasks.filter(t => t.status === 'assigned').length} angenommen, ${tasks.filter(t => t.status === 'done').length} abgeschlossen)`)
 
-  // ── Punkte für Abdullah aus abgeschlossenen Tasks gutschreiben ────────────
-  // (2 done-Tasks als assignedTo: 600 + 120 = 720 → bereits in den 2750 enthalten)
+  // ── 12 Supporter-Angebote ─────────────────────────────────────────────────
+  const offers = [
+    // ── ACTIVE (9 Angebote) ────────────────────────────────────────────────
+    {
+      title:       'Ich fahre heute Nachmittag nach Hamburg – kann Pakete mitnehmen',
+      description: 'Starte um 14 Uhr in Berlin-Mitte Richtung Hamburg. Kann kleine Pakete oder Gegenstände (bis 20 kg) mitnehmen. Meldet euch bis 12 Uhr.',
+      createdBy:   supporters[7]._id,
+      categories:  ['Körperlich'],
+      location:    'Berlin → Hamburg',
+      status:      'active',
+    },
+    {
+      title:       'Kostenlose Nachhilfestunde für Grundschüler diese Woche',
+      description: 'Ich biete diese Woche zwei kostenlose Nachhilfestunden in Mathe und Deutsch für Grundschüler an. Meldet euch einfach – komme auch nach Hause.',
+      createdBy:   supporters[1]._id,
+      categories:  ['Geistig'],
+      location:    'Berlin-Friedrichshain',
+      status:      'active',
+    },
+    {
+      title:       'Gehe morgen früh zum Wochenmarkt – kann Einkäufe miterledigen',
+      description: 'Ich bin morgen Samstag ab 9 Uhr auf dem Markt am Kollwitzplatz. Wer eine Einkaufsliste hat: einfach schicken, ich bringe es vorbei.',
+      createdBy:   supporters[11]._id,
+      categories:  ['Körperlich', 'Sozial & Kommunikation'],
+      location:    'Berlin-Prenzlauer Berg',
+      status:      'active',
+    },
+    {
+      title:       'Kostenloser PC-Check – Frühjahrsputz für euren Rechner',
+      description: 'Ich biete diese Woche gratis PC-Checks an: Viren entfernen, Updates einspielen, Arbeitsspeicher aufräumen. Windows und Mac. Komme auch vorbei.',
+      createdBy:   supporters[0]._id,
+      categories:  ['Geistig'],
+      location:    'Berlin-Mitte',
+      status:      'active',
+    },
+    {
+      title:       'Hundebetreuung am Wochenende – habe selbst einen Hund',
+      description: 'Ich passe dieses Wochenende auf einen weiteren Hund auf. Mein Hund ist freundlich und mag Gesellschaft. Kleinhunde bevorzugt.',
+      createdBy:   supporters[13]._id,
+      categories:  ['Sozial & Kommunikation'],
+      location:    'Berlin-Prenzlauer Berg',
+      status:      'active',
+    },
+    {
+      title:       'Helfe beim Möbelaufbau – habe alle Werkzeuge dabei',
+      description: 'Bin gelernter Schreiner und helfe gerne beim Aufbau von IKEA-Möbeln oder sonstigen Aufbauprojekten. Habe eigenes Werkzeug inklusive Bohrmaschine.',
+      createdBy:   supporters[2]._id,
+      categories:  ['Körperlich'],
+      location:    'München-Mitte',
+      status:      'active',
+    },
+    {
+      title:       'Biete Probestunde Gitarre oder Klavier – kostenlos',
+      description: 'Ich unterrichte seit 8 Jahren und biete diese Woche kostenlose Probestunden an. Anfänger herzlich willkommen. Instrument muss vorhanden sein.',
+      createdBy:   supporters[3]._id,
+      categories:  ['Talent & Kreativität'],
+      location:    'Berlin-Prenzlauer Berg',
+      status:      'active',
+    },
+    {
+      title:       'Fahre Samstag zum IKEA – kann jemanden mitnehmen oder Sachen abholen',
+      description: 'Fahre am Samstag mit dem Auto zum IKEA Tempelhof. Habe noch 2 Plätze frei und Platz im Kofferraum für eine Bestellung. Absprache nötig.',
+      createdBy:   supporters[5]._id,
+      categories:  ['Körperlich', 'Körperlich'],
+      location:    'Berlin → IKEA Tempelhof',
+      status:      'active',
+    },
+    {
+      title:       'Arabisch-Deutsch Übersetzungshilfe – heute verfügbar',
+      description: 'Ich bin muttersprachlich Arabisch und helfe gerne bei Briefen, Formularen oder Behördendokumenten. Kostenlos, heute Nachmittag verfügbar.',
+      createdBy:   supporters[8]._id,
+      categories:  ['Sozial & Kommunikation'],
+      location:    'Hamburg-HafenCity',
+      status:      'active',
+    },
+
+    // ── DONE (3 Angebote) ──────────────────────────────────────────────────
+    {
+      title:       'Habe letzte Woche Einkäufe für 3 Nachbarn erledigt',
+      description: 'War beim Supermarkt und habe spontan für Nachbarn miteingekauft. Lief super – mache ich gerne wieder.',
+      createdBy:   supporters[11]._id,
+      categories:  ['Körperlich', 'Sozial & Kommunikation'],
+      location:    'Berlin-Mitte',
+      status:      'done',
+    },
+    {
+      title:       'Kostenloser Python-Workshop letzten Samstag',
+      description: 'Habe 4 Leuten Python-Grundlagen erklärt. Hat Spaß gemacht – der nächste Workshop folgt in 2 Wochen.',
+      createdBy:   supporters[6]._id,
+      categories:  ['Geistig', 'Geistig'],
+      location:    'Berlin-Mitte',
+      status:      'done',
+    },
+    {
+      title:       'Umzugshilfe am letzten Wochenende erfolgreich abgeschlossen',
+      description: 'Habe einer Familie beim Umzug in den 4. Stock geholfen. 6 Stunden, viele Treppen, aber hat geklappt!',
+      createdBy:   supporters[7]._id,
+      categories:  ['Körperlich', 'Körperlich'],
+      location:    'Berlin-Friedrichshain',
+      status:      'done',
+    },
+  ]
+
+  await SupporterOffer.insertMany(offers)
+  console.log(`${offers.length} Supporter-Angebote erstellt (${offers.filter(o => o.status === 'active').length} aktiv, ${offers.filter(o => o.status === 'done').length} abgeschlossen)`)
 
   console.log('\n✅ Seed abgeschlossen!')
   console.log('────────────────────────────────────────')
