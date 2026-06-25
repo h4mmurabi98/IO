@@ -67,7 +67,7 @@ function TaskNewPage() {
         categories,
         difficulty,
         durationMinutes: Number(durationMinutes),
-        location: location.trim() || undefined,
+        location: location.trim(),
         invitedSupporters: invited,
       })
       navigate('/tasks')
@@ -154,12 +154,13 @@ function TaskNewPage() {
         </div>
 
         <div className={styles.field}>
-          <label htmlFor="location">Ort (optional)</label>
+          <label htmlFor="location">Ort</label>
           <input
             id="location"
             type="text"
             value={location}
             onChange={e => setLocation(e.target.value)}
+            required
             placeholder="z.B. Berlin-Mitte"
           />
         </div>

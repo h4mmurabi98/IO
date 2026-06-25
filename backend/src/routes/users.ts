@@ -5,7 +5,7 @@ import auth, { AuthRequest } from '../middleware/auth'
 
 const router = Router()
 
-// GET /api/users/leaderboard – Top 10 nach Scope gefiltert (Auth erforderlich)
+// Rangliste – Top 10, filterbar nach scope (country/state/district/neighborhood/friends)
 router.get('/leaderboard', auth, async (req: AuthRequest, res: Response) => {
   try {
     const scope = (req.query.scope as string) || 'country'
@@ -46,7 +46,7 @@ router.get('/leaderboard', auth, async (req: AuthRequest, res: Response) => {
   }
 })
 
-// GET /api/users/supporters – Supporter-Liste abrufen (öffentlich)
+// Alle aktiven Supporter abrufen
 router.get('/supporters', async (_req: Request, res: Response) => {
   try {
     const supporters = await User.find({ 'supporterEntry.isActive': true })
@@ -67,7 +67,7 @@ router.get('/supporters', async (_req: Request, res: Response) => {
   }
 })
 
-// PUT /api/users/supporter-entry – eigenen Supporter-Eintrag pflegen (Auth erforderlich)
+// Eigenen Supporter-Eintrag anlegen oder aktualisieren
 router.put('/supporter-entry', auth, async (req: AuthRequest, res: Response) => {
   try {
     const { bio, isActive } = req.body
@@ -87,7 +87,7 @@ router.put('/supporter-entry', auth, async (req: AuthRequest, res: Response) => 
   }
 })
 
-// POST /api/users/friends/:id – Freund hinzufügen (Auth erforderlich)
+// Freund hinzufügen
 router.post('/friends/:id', auth, async (req: AuthRequest, res: Response) => {
   try {
     const friendId = req.params.id
@@ -124,7 +124,7 @@ router.post('/friends/:id', auth, async (req: AuthRequest, res: Response) => {
   }
 })
 
-// DELETE /api/users/friends/:id – Freund entfernen (Auth erforderlich)
+// Freund entfernen
 router.delete('/friends/:id', auth, async (req: AuthRequest, res: Response) => {
   try {
     const friendId = req.params.id
@@ -150,7 +150,7 @@ router.delete('/friends/:id', auth, async (req: AuthRequest, res: Response) => {
   }
 })
 
-// GET /api/users/:id – öffentliches Profil (MUSS als letztes stehen)
+// Öffentliches Profil – muss als letzter GET-Route stehen damit /supporters nicht kollidiert
 router.get('/:id', async (req: Request, res: Response) => {
   try {
     const user = await User.findById(req.params.id)

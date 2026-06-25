@@ -24,18 +24,11 @@ export interface ITask extends Document {
   createdAt:          Date
 }
 
-const CATEGORIES: TaskCategory[] = [
-  'Geistig',
-  'Körperlich',
-  'Talent & Kreativität',
-  'Sozial & Kommunikation',
-]
-
 const taskSchema = new Schema<ITask>(
   {
     title:             { type: String, required: true, trim: true },
     description:       { type: String, required: true },
-    categories:        { type: [String], enum: CATEGORIES, required: true },
+    categories:        { type: [String], required: true },
     createdBy:         { type: Schema.Types.ObjectId, ref: 'User', required: true },
     assignedTo:        { type: Schema.Types.ObjectId, ref: 'User', default: null },
     invitedSupporters: [{ type: Schema.Types.ObjectId, ref: 'User' }],
@@ -49,7 +42,7 @@ const taskSchema = new Schema<ITask>(
   { timestamps: true }
 )
 
-// pointValue automatisch berechnen
+// pointValue = difficulty × durationMinutes, wird automatisch berechnet
 taskSchema.pre('save', function (next) {
   if (this.isNew || this.isModified('difficulty') || this.isModified('durationMinutes')) {
     this.pointValue = this.difficulty * this.durationMinutes

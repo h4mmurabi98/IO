@@ -78,7 +78,7 @@ IO/
 
 **Kategorien**
 
-`Geistig` · `Körperlich` · `Haushalt & Handwerk` · `Digital & Technik` · `Talent & Kreativität` · `Sozial & Kommunikation`
+`Geistig` · `Körperlich` · `Talent & Kreativität` · `Sozial & Kommunikation`
 
 ---
 
@@ -168,6 +168,8 @@ cd backend && npm install
 
 ### Umgebungsvariablen
 
+Beide Dateien müssen manuell angelegt werden (nicht im Repository enthalten).
+
 `.env.local` (Root):
 
 ```
@@ -198,8 +200,19 @@ Backend: http://localhost:5000
 ### Testdaten laden
 
 ```bash
-cd backend && npx ts-node src/seed.ts
+cd backend && npm run seed
 ```
+
+Das Skript legt ca. 30 Nutzer, Tasks und Supporter-Angebote an.
+
+**Test-Login (Hauptaccount):**
+
+| Feld     | Wert                      |
+| -------- | ------------------------- |
+| E-Mail   | max.mustermann@example.de |
+| Passwort | maxmustermann             |
+
+Alle anderen Seed-Nutzer verwenden das Passwort `password123`.
 
 ---
 

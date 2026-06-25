@@ -6,35 +6,26 @@ import styles from './ProfilePage.module.css'
 type Msg = { type: 'success' | 'error'; text: string }
 
 function ProfilePage() {
-  const [profile, setProfile]   = useState<UserProfile | null>(null)
-  const [loading, setLoading]   = useState(true)
-  const fileRef                 = useRef<HTMLInputElement>(null)
+  const [profile, setProfile] = useState<UserProfile | null>(null)
+  const [loading, setLoading] = useState(true)
+  const fileRef               = useRef<HTMLInputElement>(null)
 
-  // Persönliche Daten
-  const [fullName, setFullName] = useState('')
-  const [email, setEmail]       = useState('')
-  const [avatar, setAvatar]     = useState('')
-  const [personalMsg, setPersonalMsg] = useState<Msg | null>(null)
-  const [savingPersonal, setSavingPersonal] = useState(false)
-
-  // Wohnort
-  const [locState, setLocState]             = useState('')
-  const [locDistrict, setLocDistrict]       = useState('')
+  const [fullName, setFullName]               = useState('')
+  const [email, setEmail]                     = useState('')
+  const [avatar, setAvatar]                   = useState('')
+  const [locState, setLocState]               = useState('')
+  const [locDistrict, setLocDistrict]         = useState('')
   const [locNeighborhood, setLocNeighborhood] = useState('')
-  const [locationMsg, setLocationMsg]       = useState<Msg | null>(null)
-  const [savingLocation, setSavingLocation] = useState(false)
+  const [currentPw, setCurrentPw]             = useState('')
+  const [newPw, setNewPw]                     = useState('')
+  const [confirmPw, setConfirmPw]             = useState('')
 
-  // Passwort
-  const [currentPw, setCurrentPw]   = useState('')
-  const [newPw, setNewPw]           = useState('')
-  const [confirmPw, setConfirmPw]   = useState('')
-  const [passwordMsg, setPasswordMsg] = useState<Msg | null>(null)
-  const [savingPassword, setSavingPassword] = useState(false)
+  const [saving, setSaving] = useState(false)
+  const [msg, setMsg]       = useState<Msg | null>(null)
 
-  // Supporter-Eintrag
   const [bio, setBio]           = useState('')
   const [isActive, setIsActive] = useState(false)
-  const [supporterMsg, setSupporterMsg] = useState<Msg | null>(null)
+  const [supporterMsg, setSupporterMsg]   = useState<Msg | null>(null)
   const [savingSupporter, setSavingSupporter] = useState(false)
 
   useEffect(() => {
@@ -54,9 +45,8 @@ function ProfilePage() {
       .finally(() => setLoading(false))
   }, [])
 
-  const flash = (set: (m: Msg | null) => void, msg: Msg) => {
-    set(msg)
-    setTimeout(() => set(null), 4000)
+  const flash = (set: (m: Msg | null) => void, m: Msg) => {
+    set(m); setTimeout(() => set(null), 4000)
   }
 
   const handleAvatarFile = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -68,44 +58,30 @@ function ProfilePage() {
     reader.readAsDataURL(file)
   }
 
-  const handleSavePersonal = async () => {
-    setSavingPersonal(true)
+  const handleSaveAll = async () => {
+    const changingPw = newPw || currentPw || confirmPw
+    if (changingPw) {
+      if (!currentPw) { flash(setMsg, { type: 'error', text: 'Aktuelles Passwort erforderlich' }); return }
+      if (!newPw)     { flash(setMsg, { type: 'error', text: 'Neues Passwort eingeben' }); return }
+      if (newPw !== confirmPw) { flash(setMsg, { type: 'error', text: 'Passwörter stimmen nicht überein' }); return }
+      if (newPw.length < 6)   { flash(setMsg, { type: 'error', text: 'Mindestens 6 Zeichen erforderlich' }); return }
+    }
+    setSaving(true)
     try {
-      await api.put('/auth/profile', { fullName, email, avatar })
+      const body: Record<string, unknown> = {
+        fullName,
+        email,
+        avatar,
+        location: { state: locState, district: locDistrict, neighborhood: locNeighborhood },
+      }
+      if (changingPw) { body.currentPassword = currentPw; body.newPassword = newPw }
+      await api.put('/auth/profile', body)
       setProfile(p => p ? { ...p, fullName, email, avatar } : p)
-      flash(setPersonalMsg, { type: 'success', text: 'Gespeichert!' })
+      if (changingPw) { setCurrentPw(''); setNewPw(''); setConfirmPw('') }
+      flash(setMsg, { type: 'success', text: 'Gespeichert!' })
     } catch (err) {
-      flash(setPersonalMsg, { type: 'error', text: err instanceof Error ? err.message : 'Fehler beim Speichern' })
-    } finally { setSavingPersonal(false) }
-  }
-
-  const handleSaveLocation = async () => {
-    setSavingLocation(true)
-    try {
-      await api.put('/auth/profile', { location: { state: locState, district: locDistrict, neighborhood: locNeighborhood } })
-      flash(setLocationMsg, { type: 'success', text: 'Adresse gespeichert!' })
-    } catch (err) {
-      flash(setLocationMsg, { type: 'error', text: err instanceof Error ? err.message : 'Fehler beim Speichern' })
-    } finally { setSavingLocation(false) }
-  }
-
-  const handleSavePassword = async () => {
-    if (newPw !== confirmPw) {
-      flash(setPasswordMsg, { type: 'error', text: 'Passwörter stimmen nicht überein' })
-      return
-    }
-    if (newPw.length < 6) {
-      flash(setPasswordMsg, { type: 'error', text: 'Mindestens 6 Zeichen erforderlich' })
-      return
-    }
-    setSavingPassword(true)
-    try {
-      await api.put('/auth/profile', { currentPassword: currentPw, newPassword: newPw })
-      setCurrentPw(''); setNewPw(''); setConfirmPw('')
-      flash(setPasswordMsg, { type: 'success', text: 'Passwort geändert!' })
-    } catch (err) {
-      flash(setPasswordMsg, { type: 'error', text: err instanceof Error ? err.message : 'Fehler' })
-    } finally { setSavingPassword(false) }
+      flash(setMsg, { type: 'error', text: err instanceof Error ? err.message : 'Fehler beim Speichern' })
+    } finally { setSaving(false) }
   }
 
   const handleSaveSupporter = async () => {
@@ -152,12 +128,12 @@ function ProfilePage() {
         </div>
       </div>
 
-      {/* ── Edit-Bereich ── */}
-      <div className={styles.editGrid}>
+      {/* ── Persönliche Daten (alles in einer Karte) ── */}
+      <div className={styles.editCard}>
+        <p className={styles.cardTitle}>Persönliche Daten</p>
 
-        {/* Persönliche Daten */}
-        <div className={styles.editCard}>
-          <p className={styles.cardTitle}>Persönliche Daten</p>
+        <div className={styles.editSection}>
+          <p className={styles.editSectionTitle}>Name & Kontakt</p>
           <div className={styles.editField}>
             <label className={styles.editLabel}>Echter Name</label>
             <input className={styles.editInput} type="text" value={fullName}
@@ -168,17 +144,10 @@ function ProfilePage() {
             <input className={styles.editInput} type="email" value={email}
               onChange={e => setEmail(e.target.value)} placeholder="deine@email.de" />
           </div>
-          <div className={styles.editActions}>
-            <button className={styles.saveBtn} onClick={handleSavePersonal} disabled={savingPersonal}>
-              {savingPersonal ? 'Wird gespeichert…' : 'Speichern'}
-            </button>
-            {personalMsg && <span className={personalMsg.type === 'success' ? styles.successMsg : styles.errorMsg}>{personalMsg.text}</span>}
-          </div>
         </div>
 
-        {/* Wohnort / Adresse */}
-        <div className={styles.editCard}>
-          <p className={styles.cardTitle}>Wohnort</p>
+        <div className={styles.editSection}>
+          <p className={styles.editSectionTitle}>Wohnort</p>
           <div className={styles.editField}>
             <label className={styles.editLabel}>Bundesland</label>
             <input className={styles.editInput} type="text" value={locState}
@@ -194,17 +163,10 @@ function ProfilePage() {
             <input className={styles.editInput} type="text" value={locNeighborhood}
               onChange={e => setLocNeighborhood(e.target.value)} placeholder="z.B. Hackescher Markt" />
           </div>
-          <div className={styles.editActions}>
-            <button className={styles.saveBtn} onClick={handleSaveLocation} disabled={savingLocation}>
-              {savingLocation ? 'Wird gespeichert…' : 'Speichern'}
-            </button>
-            {locationMsg && <span className={locationMsg.type === 'success' ? styles.successMsg : styles.errorMsg}>{locationMsg.text}</span>}
-          </div>
         </div>
 
-        {/* Passwort ändern */}
-        <div className={styles.editCard}>
-          <p className={styles.cardTitle}>Passwort ändern</p>
+        <div className={styles.editSection}>
+          <p className={styles.editSectionTitle}>Passwort ändern</p>
           <div className={styles.editField}>
             <label className={styles.editLabel}>Aktuelles Passwort</label>
             <input className={styles.editInput} type="password" value={currentPw}
@@ -220,14 +182,14 @@ function ProfilePage() {
             <input className={styles.editInput} type="password" value={confirmPw}
               onChange={e => setConfirmPw(e.target.value)} placeholder="••••••••" autoComplete="new-password" />
           </div>
-          <div className={styles.editActions}>
-            <button className={styles.saveBtn} onClick={handleSavePassword} disabled={savingPassword || !currentPw || !newPw || !confirmPw}>
-              {savingPassword ? 'Wird gespeichert…' : 'Passwort ändern'}
-            </button>
-            {passwordMsg && <span className={passwordMsg.type === 'success' ? styles.successMsg : styles.errorMsg}>{passwordMsg.text}</span>}
-          </div>
         </div>
 
+        <div className={styles.editActions}>
+          <button className={styles.saveBtn} onClick={handleSaveAll} disabled={saving}>
+            {saving ? 'Wird gespeichert…' : 'Speichern'}
+          </button>
+          {msg && <span className={msg.type === 'success' ? styles.successMsg : styles.errorMsg}>{msg.text}</span>}
+        </div>
       </div>
 
       {/* Statistiken */}

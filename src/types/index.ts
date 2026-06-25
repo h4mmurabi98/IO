@@ -102,13 +102,17 @@ export interface SupporterEntry {
 }
 
 export interface SupporterOffer {
-  id:          string
-  title:       string
-  description: string
-  categories:  TaskCategory[]
-  location:    string
-  status:      'active' | 'done'
-  createdAt:   string
+  id:              string
+  title:           string
+  description:     string
+  categories:      TaskCategory[]
+  location:        string
+  offerDate:       string | null
+  difficulty:      number
+  durationMinutes: number
+  pointValue:      number
+  status:          'active' | 'done'
+  createdAt:       string
   createdBy: {
     id:       string
     username: string
@@ -116,4 +120,9 @@ export interface SupporterOffer {
     points:   number
     avatar:   string
   }
+  assignedTo: {
+    id:       string
+    username: string
+  } | null
+  acceptMessage: string
 }

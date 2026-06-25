@@ -6,7 +6,7 @@ import auth, { AuthRequest } from '../middleware/auth'
 
 const router = Router()
 
-// POST /api/auth/register
+// Registrierung – gibt direkt einen JWT zurück
 router.post('/register', async (req: Request, res: Response) => {
   try {
     const { username, email, password, fullName, state } = req.body
@@ -51,12 +51,12 @@ router.post('/register', async (req: Request, res: Response) => {
   }
 })
 
-// POST /api/auth/login
+// Login
 router.post('/login', async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body
 
-    // Passwort explizit selektieren, da select:false im Schema
+    // Passwort-Feld ist per default ausgeblendet (select: false im Schema)
     const user = await User.findOne({ email }).select('+password')
     if (!user || !(await user.comparePassword(password))) {
       res.status(400).json({ message: 'Email oder Passwort falsch' })
@@ -81,7 +81,7 @@ router.post('/login', async (req: Request, res: Response) => {
   }
 })
 
-// GET /api/auth/me – eigenes Profil mit Rollen-Stats abrufen (geschützt)
+// Eigenes Profil abrufen inkl. Seeker- und Supporter-Statistiken
 router.get('/me', auth, async (req: AuthRequest, res: Response) => {
   try {
     const user = await User.findById(req.userId)
@@ -90,7 +90,6 @@ router.get('/me', auth, async (req: AuthRequest, res: Response) => {
       return
     }
 
-    // Seeker-Stats: Tasks die ich erstellt habe
     const seekerTasks = await Task.find({ createdBy: req.userId })
     const seekerCompleted = seekerTasks.filter(t => t.status === 'done')
     const avgDifficulty =
@@ -98,7 +97,6 @@ router.get('/me', auth, async (req: AuthRequest, res: Response) => {
         ? seekerTasks.reduce((sum, t) => sum + t.difficulty, 0) / seekerTasks.length
         : 0
 
-    // Supporter-Stats: Tasks die ich angenommen habe
     const supporterTasks    = await Task.find({ assignedTo: req.userId })
     const supporterCompleted = supporterTasks.filter(t => t.status === 'done')
     const totalPointsEarned  = supporterCompleted.reduce((sum, t) => sum + t.pointValue, 0)
@@ -131,7 +129,7 @@ router.get('/me', auth, async (req: AuthRequest, res: Response) => {
   }
 })
 
-// PUT /api/auth/profile – Profil aktualisieren (fullName, avatar, location, email, passwort)
+// Profil aktualisieren – Name, Avatar, Wohnort, Email und optional Passwort
 router.put('/profile', auth, async (req: AuthRequest, res: Response) => {
   try {
     const { fullName, avatar, location, email, currentPassword, newPassword } = req.body
@@ -170,6 +168,7 @@ router.put('/profile', auth, async (req: AuthRequest, res: Response) => {
       user.email = email.trim()
     }
 
+    // Passwort nur ändern wenn currentPassword mitgeschickt wurde
     if (typeof newPassword === 'string' && newPassword) {
       if (!currentPassword) {
         res.status(400).json({ message: 'Aktuelles Passwort erforderlich' })

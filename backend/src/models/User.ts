@@ -54,12 +54,11 @@ const userSchema = new Schema<IUser>(
   { timestamps: true }
 )
 
-// Passwort hashen vor dem Speichern
+// Passwort hashen und sicherstellen dass Punkte nie negativ werden
 userSchema.pre('save', async function (next) {
   if (this.isModified('password')) {
     this.password = await bcrypt.hash(this.password, 12)
   }
-  // Punkte dürfen nie negativ werden
   if (this.points < 0) this.points = 0
   next()
 })

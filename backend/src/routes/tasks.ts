@@ -7,7 +7,6 @@ import { calcLevel } from '../utils/levels'
 
 const router = Router()
 
-// Hilfsfunktion: MongoDB-Objekt in API-Response umwandeln
 const formatTask = (task: ITask) => ({
   id:                 String(task._id),
   title:              task.title,
@@ -25,12 +24,11 @@ const formatTask = (task: ITask) => ({
   createdAt:          task.createdAt,
 })
 
-// GET /api/tasks – öffentlich, optional nach Kategorien filtern
+// Alle offenen Hilfegesuche – optional nach Kategorien filtern
 router.get('/', async (req: Request, res: Response) => {
   try {
     const filter: Record<string, unknown> = { status: 'open' }
 
-    // ?categories=Geistig,Körperlich → Array aufteilen und filtern
     if (req.query.categories) {
       const cats = (req.query.categories as string).split(',').map(c => c.trim())
       filter.categories = { $in: cats }
@@ -43,14 +41,17 @@ router.get('/', async (req: Request, res: Response) => {
   }
 })
 
-// POST /api/tasks – neuen Task erstellen (Auth erforderlich)
-// pointValue wird vom Backend berechnet (difficulty * durationMinutes)
+// Neues Hilfegesuch erstellen – pointValue wird serverseitig berechnet
 router.post('/', auth, async (req: AuthRequest, res: Response) => {
   try {
     const { title, description, categories, difficulty, durationMinutes, location, invitedSupporters } = req.body
 
     if (!Array.isArray(categories) || categories.length === 0) {
       res.status(400).json({ message: 'Mindestens eine Kategorie erforderlich' })
+      return
+    }
+    if (!location || !String(location).trim()) {
+      res.status(400).json({ message: 'Ort ist erforderlich' })
       return
     }
     if (difficulty < 1 || difficulty > 5) {
@@ -79,7 +80,7 @@ router.post('/', auth, async (req: AuthRequest, res: Response) => {
   }
 })
 
-// GET /api/tasks/:id – öffentlich
+// Einzelnes Hilfegesuch abrufen
 router.get('/:id', async (req: Request, res: Response) => {
   try {
     const task = await Task.findById(req.params.id)
@@ -93,7 +94,7 @@ router.get('/:id', async (req: Request, res: Response) => {
   }
 })
 
-// PUT /api/tasks/:id/assign – Task annehmen (Auth erforderlich)
+// Hilfegesuch annehmen
 router.put('/:id/assign', auth, async (req: AuthRequest, res: Response) => {
   try {
     const task = await Task.findById(req.params.id)
@@ -120,7 +121,7 @@ router.put('/:id/assign', auth, async (req: AuthRequest, res: Response) => {
   }
 })
 
-// PUT /api/tasks/:id/complete – Task abschließen + Punkte & Level aktualisieren (Auth erforderlich)
+// Hilfegesuch abschließen – Punkte und Level des Supporters aktualisieren
 router.put('/:id/complete', auth, async (req: AuthRequest, res: Response) => {
   try {
     const task = await Task.findById(req.params.id)
@@ -143,7 +144,6 @@ router.put('/:id/complete', auth, async (req: AuthRequest, res: Response) => {
     task.completedAt = new Date()
     await task.save()
 
-    // Punkte dem Ausführenden gutschreiben und Level neu berechnen
     const user = await User.findById(task.assignedTo)
     if (user) {
       user.points += task.pointValue

@@ -17,18 +17,18 @@ const seed = async () => {
   await User.deleteMany({})
   console.log('Datenbank geleert')
 
-  const pwDefault  = 'password123'
-  const pwAbdullah = '19982000'
+  const pwDefault = 'password123'
+  const pwMain    = 'maxmustermann'
 
-  // ── Test-User (Abdullah) ──────────────────────────────────────────────────
-  const abdullahPoints = 2750
-  const abdullah = await User.create({
-    username:       'H4mmurabi98',
-    email:          'frostaliraqi98@gmail.com',
-    password:       pwAbdullah,
-    fullName:       'Abdullah Mubasher',
-    points:         abdullahPoints,
-    level:          calculateLevel(abdullahPoints),
+  // Test-User
+  const mainPoints = 2750
+  const mainUser = await User.create({
+    username:       'MaxMustermann',
+    email:          'max.mustermann@example.de',
+    password:       pwMain,
+    fullName:       'Max Mustermann',
+    points:         mainPoints,
+    level:          calculateLevel(mainPoints),
     badges:         ['Erster Schritt', 'Helfer', 'Vertrauenswürdig'],
     location: {
       country:      'Deutschland',
@@ -41,9 +41,9 @@ const seed = async () => {
       isActive: true,
     },
   })
-  console.log(`Test-User erstellt: H4mmurabi98 / 19982000 (LVL ${calculateLevel(abdullahPoints)})`)
+  console.log(`Test-User erstellt: MaxMustermann / maxmustermann (LVL ${calculateLevel(mainPoints)})`)
 
-  // ── 25 Supporters ─────────────────────────────────────────────────────────
+  // Supporters anlegen
   const supporterData = [
     { username: 'TechWizard42',    points: 8900, location: { country: 'Deutschland', state: 'Berlin',  district: 'Mitte',           neighborhood: 'Hackescher Markt'  }, bio: 'PC-Reparatur, WLAN-Setup, Smartphone-Hilfe – ich bin für alles zuständig.' },
     { username: 'LernCoach_Lisa',  points: 7200, location: { country: 'Deutschland', state: 'Berlin',  district: 'Friedrichshain',  neighborhood: 'Boxhagener Platz'  }, bio: 'Nachhilfe in Mathe, Deutsch und Englisch bis Klasse 12.' },
@@ -88,10 +88,10 @@ const seed = async () => {
   )
   console.log(`${supporters.length} Supporters erstellt`)
 
-  // ── 25 Seekers ────────────────────────────────────────────────────────────
+  // Seekers anlegen
   const seekerData = [
     { username: 'HilfeSucher_Anna',   points: 420, location: { country: 'Deutschland', state: 'Berlin',  district: 'Mitte',           neighborhood: 'Hackescher Markt'  } },
-    { username: 'MaxMustermann',       points: 180, location: { country: 'Deutschland', state: 'Bayern',  district: 'München-Mitte',   neighborhood: 'Maxvorstadt'       } },
+    { username: 'MustermannMax',       points: 180, location: { country: 'Deutschland', state: 'Bayern',  district: 'München-Mitte',   neighborhood: 'Maxvorstadt'       } },
     { username: 'ElternteilEva',       points: 300, location: { country: 'Deutschland', state: 'Berlin',  district: 'Prenzlauer Berg', neighborhood: 'Kollwitzkiez'      } },
     { username: 'RentnerRoland',       points:  90, location: { country: 'Deutschland', state: 'NRW',     district: 'Köln-Innenstadt', neighborhood: 'Altstadt-Nord'     } },
     { username: 'StudentSven',         points: 510, location: { country: 'Deutschland', state: 'Berlin',  district: 'Friedrichshain',  neighborhood: 'Boxhagener Platz'  } },
@@ -133,16 +133,16 @@ const seed = async () => {
   )
   console.log(`${seekers.length} Seekers erstellt`)
 
-  // ── Freunde für Abdullah ──────────────────────────────────────────────────
+  // Freundesliste setzen
   const friendIds = [
     supporters[0]._id, supporters[1]._id, supporters[6]._id,
     supporters[11]._id, supporters[3]._id,
     seekers[0]._id, seekers[4]._id, seekers[10]._id,
   ]
-  await User.findByIdAndUpdate(abdullah._id, { $set: { friends: friendIds } })
-  console.log('Freundesliste für H4mmurabi98 gesetzt')
+  await User.findByIdAndUpdate(mainUser._id, { $set: { friends: friendIds } })
+  console.log('Freundesliste für MaxMustermann gesetzt')
 
-  // ── 30 Tasks ──────────────────────────────────────────────────────────────
+  // Tasks anlegen
   type TaskStatus = 'open' | 'assigned' | 'done'
   interface TaskSeed {
     title: string; description: string
@@ -154,7 +154,7 @@ const seed = async () => {
   }
 
   const tasks: TaskSeed[] = [
-    // ── OPEN (12 Aufgaben) ──────────────────────────────────────────────────
+    // offene Tasks
     {
       title:           'WLAN-Router neu einrichten',
       description:     'Mein Router hat ein Firmware-Update bekommen und jetzt kommen keine Geräte mehr ins Netz. Ich brauche Hilfe beim Zurücksetzen und Neukonfigurieren.',
@@ -264,7 +264,7 @@ const seed = async () => {
       createdBy:       seekers[21]._id,
     },
 
-    // ── OPEN (weitere 20 Aufgaben) ─────────────────────────────────────────
+
     {
       title:           'Excel-Tabelle für Haushaltsbuch erstellen',
       description:     'Ich möchte meine Ausgaben besser im Blick behalten. Jemand soll mir eine übersichtliche Excel-Vorlage mit Formeln bauen.',
@@ -446,7 +446,7 @@ const seed = async () => {
       createdBy:       seekers[9]._id,
     },
 
-    // ── ASSIGNED (8 Aufgaben) ───────────────────────────────────────────────
+    // angenommene Tasks
     {
       title:           'Drucker installieren – Windows 11',
       description:     'Mein neuer HP-Drucker wird von Windows nicht erkannt. Treiber-Installation schlägt immer fehl.',
@@ -528,7 +528,7 @@ const seed = async () => {
       assignedTo:      supporters[8]._id,
     },
 
-    // ── ASSIGNED (weitere 5 Aufgaben) ──────────────────────────────────────
+
     {
       title:           'Nähmaschine reparieren – Fadenproblem',
       description:     'Meine alte Singer-Nähmaschine macht Schlaufen auf der Unterseite. Ich brauche jemanden der sich mit Nähmaschinen auskennt.',
@@ -580,7 +580,7 @@ const seed = async () => {
       assignedTo:      supporters[9]._id,
     },
 
-    // ── DONE (10 Aufgaben) ──────────────────────────────────────────────────
+    // abgeschlossene Tasks
     {
       title:           'Nachhilfe Physik – Abitur-Vorbereitung',
       description:     'Mein Sohn hat in 6 Wochen Abitur in Physik. Wir brauchen intensive Unterstützung.',
@@ -589,7 +589,7 @@ const seed = async () => {
       location:        'Berlin-Mitte',
       status:          'done',
       createdBy:       seekers[0]._id,
-      assignedTo:      abdullah._id,
+      assignedTo:      mainUser._id,
       completedAt:     new Date('2026-05-10'),
     },
     {
@@ -677,7 +677,7 @@ const seed = async () => {
       location:        'München-Schwabing',
       status:          'done',
       createdBy:       seekers[7]._id,
-      assignedTo:      abdullah._id,
+      assignedTo:      mainUser._id,
       completedAt:     new Date('2026-05-28'),
     },
     {
@@ -699,106 +699,149 @@ const seed = async () => {
   }
   console.log(`${tasks.length} Tasks erstellt (${tasks.filter(t => t.status === 'open').length} offen, ${tasks.filter(t => t.status === 'assigned').length} angenommen, ${tasks.filter(t => t.status === 'done').length} abgeschlossen)`)
 
-  // ── 12 Supporter-Angebote ─────────────────────────────────────────────────
+  // Supporter-Angebote anlegen
   const offers = [
-    // ── ACTIVE (9 Angebote) ────────────────────────────────────────────────
+    // aktive Angebote
     {
-      title:       'Ich fahre heute Nachmittag nach Hamburg – kann Pakete mitnehmen',
-      description: 'Starte um 14 Uhr in Berlin-Mitte Richtung Hamburg. Kann kleine Pakete oder Gegenstände (bis 20 kg) mitnehmen. Meldet euch bis 12 Uhr.',
-      createdBy:   supporters[7]._id,
-      categories:  ['Körperlich'],
-      location:    'Berlin → Hamburg',
-      status:      'active',
+      title:           'Ich fahre heute Nachmittag nach Hamburg – kann Pakete mitnehmen',
+      description:     'Starte um 14 Uhr in Berlin-Mitte Richtung Hamburg. Kann kleine Pakete oder Gegenstände (bis 20 kg) mitnehmen. Meldet euch bis 12 Uhr.',
+      createdBy:       supporters[7]._id,
+      categories:      ['Körperlich'],
+      location:        'Berlin → Hamburg',
+      offerDate:       new Date('2026-06-28'),
+      difficulty:      2,
+      durationMinutes: 180,
+      pointValue:      360,
+      status:          'active',
     },
     {
-      title:       'Kostenlose Nachhilfestunde für Grundschüler diese Woche',
-      description: 'Ich biete diese Woche zwei kostenlose Nachhilfestunden in Mathe und Deutsch für Grundschüler an. Meldet euch einfach – komme auch nach Hause.',
-      createdBy:   supporters[1]._id,
-      categories:  ['Geistig'],
-      location:    'Berlin-Friedrichshain',
-      status:      'active',
+      title:           'Kostenlose Nachhilfestunde für Grundschüler diese Woche',
+      description:     'Ich biete diese Woche zwei kostenlose Nachhilfestunden in Mathe und Deutsch für Grundschüler an. Meldet euch einfach – komme auch nach Hause.',
+      createdBy:       supporters[1]._id,
+      categories:      ['Geistig'],
+      location:        'Berlin-Friedrichshain',
+      offerDate:       new Date('2026-06-30'),
+      difficulty:      3,
+      durationMinutes: 60,
+      pointValue:      180,
+      status:          'active',
     },
     {
-      title:       'Gehe morgen früh zum Wochenmarkt – kann Einkäufe miterledigen',
-      description: 'Ich bin morgen Samstag ab 9 Uhr auf dem Markt am Kollwitzplatz. Wer eine Einkaufsliste hat: einfach schicken, ich bringe es vorbei.',
-      createdBy:   supporters[11]._id,
-      categories:  ['Körperlich', 'Sozial & Kommunikation'],
-      location:    'Berlin-Prenzlauer Berg',
-      status:      'active',
+      title:           'Gehe morgen früh zum Wochenmarkt – kann Einkäufe miterledigen',
+      description:     'Ich bin morgen Samstag ab 9 Uhr auf dem Markt am Kollwitzplatz. Wer eine Einkaufsliste hat: einfach schicken, ich bringe es vorbei.',
+      createdBy:       supporters[11]._id,
+      categories:      ['Körperlich', 'Sozial & Kommunikation'],
+      location:        'Berlin-Prenzlauer Berg',
+      offerDate:       new Date('2026-06-28'),
+      difficulty:      1,
+      durationMinutes: 45,
+      pointValue:      45,
+      status:          'active',
     },
     {
-      title:       'Kostenloser PC-Check – Frühjahrsputz für euren Rechner',
-      description: 'Ich biete diese Woche gratis PC-Checks an: Viren entfernen, Updates einspielen, Arbeitsspeicher aufräumen. Windows und Mac. Komme auch vorbei.',
-      createdBy:   supporters[0]._id,
-      categories:  ['Geistig'],
-      location:    'Berlin-Mitte',
-      status:      'active',
+      title:           'Kostenloser PC-Check – Frühjahrsputz für euren Rechner',
+      description:     'Ich biete diese Woche gratis PC-Checks an: Viren entfernen, Updates einspielen, Arbeitsspeicher aufräumen. Windows und Mac. Komme auch vorbei.',
+      createdBy:       supporters[0]._id,
+      categories:      ['Geistig'],
+      location:        'Berlin-Mitte',
+      difficulty:      4,
+      durationMinutes: 90,
+      pointValue:      360,
+      status:          'active',
     },
     {
-      title:       'Hundebetreuung am Wochenende – habe selbst einen Hund',
-      description: 'Ich passe dieses Wochenende auf einen weiteren Hund auf. Mein Hund ist freundlich und mag Gesellschaft. Kleinhunde bevorzugt.',
-      createdBy:   supporters[13]._id,
-      categories:  ['Sozial & Kommunikation'],
-      location:    'Berlin-Prenzlauer Berg',
-      status:      'active',
+      title:           'Hundebetreuung am Wochenende – habe selbst einen Hund',
+      description:     'Ich passe dieses Wochenende auf einen weiteren Hund auf. Mein Hund ist freundlich und mag Gesellschaft. Kleinhunde bevorzugt.',
+      createdBy:       supporters[13]._id,
+      categories:      ['Sozial & Kommunikation'],
+      location:        'Berlin-Prenzlauer Berg',
+      offerDate:       new Date('2026-06-29'),
+      difficulty:      2,
+      durationMinutes: 120,
+      pointValue:      240,
+      status:          'active',
     },
     {
-      title:       'Helfe beim Möbelaufbau – habe alle Werkzeuge dabei',
-      description: 'Bin gelernter Schreiner und helfe gerne beim Aufbau von IKEA-Möbeln oder sonstigen Aufbauprojekten. Habe eigenes Werkzeug inklusive Bohrmaschine.',
-      createdBy:   supporters[2]._id,
-      categories:  ['Körperlich'],
-      location:    'München-Mitte',
-      status:      'active',
+      title:           'Helfe beim Möbelaufbau – habe alle Werkzeuge dabei',
+      description:     'Bin gelernter Schreiner und helfe gerne beim Aufbau von IKEA-Möbeln oder sonstigen Aufbauprojekten. Habe eigenes Werkzeug inklusive Bohrmaschine.',
+      createdBy:       supporters[2]._id,
+      categories:      ['Körperlich'],
+      location:        'München-Mitte',
+      offerDate:       new Date('2026-07-02'),
+      difficulty:      3,
+      durationMinutes: 150,
+      pointValue:      450,
+      status:          'active',
     },
     {
-      title:       'Biete Probestunde Gitarre oder Klavier – kostenlos',
-      description: 'Ich unterrichte seit 8 Jahren und biete diese Woche kostenlose Probestunden an. Anfänger herzlich willkommen. Instrument muss vorhanden sein.',
-      createdBy:   supporters[3]._id,
-      categories:  ['Talent & Kreativität'],
-      location:    'Berlin-Prenzlauer Berg',
-      status:      'active',
+      title:           'Biete Probestunde Gitarre oder Klavier – kostenlos',
+      description:     'Ich unterrichte seit 8 Jahren und biete diese Woche kostenlose Probestunden an. Anfänger herzlich willkommen. Instrument muss vorhanden sein.',
+      createdBy:       supporters[3]._id,
+      categories:      ['Talent & Kreativität'],
+      location:        'Berlin-Prenzlauer Berg',
+      offerDate:       new Date('2026-07-01'),
+      difficulty:      3,
+      durationMinutes: 60,
+      pointValue:      180,
+      status:          'active',
     },
     {
-      title:       'Fahre Samstag zum IKEA – kann jemanden mitnehmen oder Sachen abholen',
-      description: 'Fahre am Samstag mit dem Auto zum IKEA Tempelhof. Habe noch 2 Plätze frei und Platz im Kofferraum für eine Bestellung. Absprache nötig.',
-      createdBy:   supporters[5]._id,
-      categories:  ['Körperlich', 'Körperlich'],
-      location:    'Berlin → IKEA Tempelhof',
-      status:      'active',
+      title:           'Fahre Samstag zum IKEA – kann jemanden mitnehmen oder Sachen abholen',
+      description:     'Fahre am Samstag mit dem Auto zum IKEA Tempelhof. Habe noch 2 Plätze frei und Platz im Kofferraum für eine Bestellung. Absprache nötig.',
+      createdBy:       supporters[5]._id,
+      categories:      ['Körperlich'],
+      location:        'Berlin → IKEA Tempelhof',
+      offerDate:       new Date('2026-06-28'),
+      difficulty:      2,
+      durationMinutes: 120,
+      pointValue:      240,
+      status:          'active',
     },
     {
-      title:       'Arabisch-Deutsch Übersetzungshilfe – heute verfügbar',
-      description: 'Ich bin muttersprachlich Arabisch und helfe gerne bei Briefen, Formularen oder Behördendokumenten. Kostenlos, heute Nachmittag verfügbar.',
-      createdBy:   supporters[8]._id,
-      categories:  ['Sozial & Kommunikation'],
-      location:    'Hamburg-HafenCity',
-      status:      'active',
+      title:           'Arabisch-Deutsch Übersetzungshilfe – heute verfügbar',
+      description:     'Ich bin muttersprachlich Arabisch und helfe gerne bei Briefen, Formularen oder Behördendokumenten. Kostenlos, heute Nachmittag verfügbar.',
+      createdBy:       supporters[8]._id,
+      categories:      ['Sozial & Kommunikation'],
+      location:        'Hamburg-HafenCity',
+      difficulty:      2,
+      durationMinutes: 60,
+      pointValue:      120,
+      status:          'active',
     },
 
-    // ── DONE (3 Angebote) ──────────────────────────────────────────────────
+    // abgeschlossene Angebote
     {
-      title:       'Habe letzte Woche Einkäufe für 3 Nachbarn erledigt',
-      description: 'War beim Supermarkt und habe spontan für Nachbarn miteingekauft. Lief super – mache ich gerne wieder.',
-      createdBy:   supporters[11]._id,
-      categories:  ['Körperlich', 'Sozial & Kommunikation'],
-      location:    'Berlin-Mitte',
-      status:      'done',
+      title:           'Habe letzte Woche Einkäufe für 3 Nachbarn erledigt',
+      description:     'War beim Supermarkt und habe spontan für Nachbarn miteingekauft. Lief super – mache ich gerne wieder.',
+      createdBy:       supporters[11]._id,
+      categories:      ['Körperlich', 'Sozial & Kommunikation'],
+      location:        'Berlin-Mitte',
+      difficulty:      1,
+      durationMinutes: 60,
+      pointValue:      60,
+      status:          'done',
     },
     {
-      title:       'Kostenloser Python-Workshop letzten Samstag',
-      description: 'Habe 4 Leuten Python-Grundlagen erklärt. Hat Spaß gemacht – der nächste Workshop folgt in 2 Wochen.',
-      createdBy:   supporters[6]._id,
-      categories:  ['Geistig', 'Geistig'],
-      location:    'Berlin-Mitte',
-      status:      'done',
+      title:           'Kostenloser Python-Workshop letzten Samstag',
+      description:     'Habe 4 Leuten Python-Grundlagen erklärt. Hat Spaß gemacht – der nächste Workshop folgt in 2 Wochen.',
+      createdBy:       supporters[6]._id,
+      categories:      ['Geistig'],
+      location:        'Berlin-Mitte',
+      difficulty:      4,
+      durationMinutes: 120,
+      pointValue:      480,
+      status:          'done',
     },
     {
-      title:       'Umzugshilfe am letzten Wochenende erfolgreich abgeschlossen',
-      description: 'Habe einer Familie beim Umzug in den 4. Stock geholfen. 6 Stunden, viele Treppen, aber hat geklappt!',
-      createdBy:   supporters[7]._id,
-      categories:  ['Körperlich', 'Körperlich'],
-      location:    'Berlin-Friedrichshain',
-      status:      'done',
+      title:           'Umzugshilfe am letzten Wochenende erfolgreich abgeschlossen',
+      description:     'Habe einer Familie beim Umzug in den 4. Stock geholfen. 6 Stunden, viele Treppen, aber hat geklappt!',
+      createdBy:       supporters[7]._id,
+      categories:      ['Körperlich'],
+      location:        'Berlin-Friedrichshain',
+      difficulty:      5,
+      durationMinutes: 360,
+      pointValue:      1800,
+      status:          'done',
     },
   ]
 
@@ -806,10 +849,8 @@ const seed = async () => {
   console.log(`${offers.length} Supporter-Angebote erstellt (${offers.filter(o => o.status === 'active').length} aktiv, ${offers.filter(o => o.status === 'done').length} abgeschlossen)`)
 
   console.log('\n✅ Seed abgeschlossen!')
-  console.log('────────────────────────────────────────')
-  console.log('Test-Login: frostaliraqi98@gmail.com / 19982000')
-  console.log(`Abdullah: LVL ${calculateLevel(abdullahPoints)}, ${abdullahPoints} Punkte`)
-  console.log('────────────────────────────────────────')
+  console.log('Test-Login: max.mustermann@example.de / maxmustermann')
+  console.log(`MaxMustermann: LVL ${calculateLevel(mainPoints)}, ${mainPoints} Punkte`)
   process.exit(0)
 }
 
