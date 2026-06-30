@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useParams, useNavigate } from 'react-router-dom'
 import { api } from '../lib/api'
 import { useAuth } from '../contexts/AuthContext'
 import type { Task } from '../types'
@@ -22,6 +22,7 @@ function formatElapsed(seconds: number) {
 function TaskDetailPage() {
   const { id }                       = useParams<{ id: string }>()
   const { user, refreshUser }        = useAuth()
+  const navigate                     = useNavigate()
   const [task, setTask]              = useState<Task | null>(null)
   const [loading, setLoading]        = useState(true)
   const [error, setError]            = useState('')
@@ -170,13 +171,19 @@ function TaskDetailPage() {
         <div className={styles.actions}>
           {/* Offenes Hilfegesuch annehmen */}
           {task.status === 'open' && !isCreator && (
-            <button
-              className={styles.btnPrimary}
-              onClick={handleAssign}
-              disabled={actionLoading}
-            >
-              {actionLoading ? 'Wird angenommen…' : 'Hilfegesuch annehmen'}
-            </button>
+            user ? (
+              <button
+                className={styles.btnPrimary}
+                onClick={handleAssign}
+                disabled={actionLoading}
+              >
+                {actionLoading ? 'Wird angenommen…' : 'Hilfegesuch annehmen'}
+              </button>
+            ) : (
+              <button className={styles.btnPrimary} onClick={() => navigate('/login')}>
+                Anmelden zum Annehmen
+              </button>
+            )
           )}
 
           {/* Zugewiesenes Hilfegesuch: Supporter sieht Beginnen-Button */}
