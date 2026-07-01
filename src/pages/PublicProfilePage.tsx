@@ -21,7 +21,7 @@ function PublicProfilePage() {
       .finally(() => setLoading(false))
   }, [id])
 
-  const isFriend = !!(user && profile && user.friends.includes(profile.id))
+  const isFriend = !!(user && profile && (user.friends ?? []).includes(profile.id))
   const isOwnProfile = user?.id === profile?.id
 
   const handleFriendToggle = async () => {

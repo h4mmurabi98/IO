@@ -38,12 +38,15 @@ router.post('/register', async (req: Request, res: Response) => {
     res.status(201).json({
       token,
       user: {
-        id: String(user._id),
+        id:       String(user._id),
         username: user.username,
-        email: user.email,
-        points: user.points,
-        level: user.level,
-        badges: user.badges,
+        email:    user.email,
+        fullName: user.fullName,
+        avatar:   user.avatar,
+        points:   user.points,
+        level:    user.level,
+        badges:   user.badges,
+        friends:  user.friends.map(id => String(id)),
       },
     })
   } catch (err) {
@@ -68,12 +71,15 @@ router.post('/login', async (req: Request, res: Response) => {
     res.json({
       token,
       user: {
-        id: String(user._id),
+        id:       String(user._id),
         username: user.username,
-        email: user.email,
-        points: user.points,
-        level: user.level,
-        badges: user.badges,
+        email:    user.email,
+        fullName: user.fullName,
+        avatar:   user.avatar,
+        points:   user.points,
+        level:    user.level,
+        badges:   user.badges,
+        friends:  user.friends.map(id => String(id)),
       },
     })
   } catch (err) {

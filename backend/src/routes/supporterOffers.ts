@@ -161,21 +161,21 @@ router.put("/:id/done", auth, async (req: AuthRequest, res: Response) => {
     offer.status = "done";
     await offer.save();
 
-    const pointsEarned = offer.pointValue;
+    // Punkte nur vergeben wenn jemand das Angebot angenommen hat
+    const pointsEarned = offer.assignedTo ? offer.pointValue : 0;
+
     const user = await User.findById(req.userId);
-    if (user) {
+    if (user && pointsEarned > 0) {
       user.points += pointsEarned;
       user.level = calcLevel(user.points);
       await user.save();
-      res.json({
-        message: "Hilfsangebot abgeschlossen",
-        pointsEarned,
-        newPoints: user.points,
-      });
-      return;
     }
 
-    res.json({ message: "Hilfsangebot abgeschlossen" });
+    res.json({
+      message: "Hilfsangebot abgeschlossen",
+      pointsEarned,
+      newPoints: user?.points,
+    });
   } catch {
     res.status(500).json({ message: "Serverfehler" });
   }
